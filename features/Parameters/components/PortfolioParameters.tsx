@@ -1,7 +1,8 @@
 import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 import SendIcon from "@mui/icons-material/Send";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
+import OnayBox from "@/components/Ui/OnayBox";
 import FormTextField from "@/components/Ui/FormTextField";
 import { Form, Formik, FormikHelpers } from "formik";
 import { Parameter } from "@/lib/types/types";
@@ -76,7 +77,10 @@ const PortfolioParameters = ({ data }: { data: Parameter }) => {
 
   return (
     <Grid container spacing={2} sx={{ mt: 2 }}>
-      <Grid item xs={12} md={6}>
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
+      )}
+      <Grid size={{ xs: 12, md: 6 }}>
         <Typography variant="subtitle1" textAlign="center" sx={{ p: 1, mb: 1 }}>
           Portföy Ekle
         </Typography>
@@ -120,7 +124,7 @@ const PortfolioParameters = ({ data }: { data: Parameter }) => {
           </Formik>
         </Paper>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Typography textAlign="center" variant="subtitle1" sx={{ p: 1, mb: 1 }}>
           Portföy Listesi
         </Typography>

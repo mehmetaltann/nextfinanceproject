@@ -1,6 +1,7 @@
 "use client";
 import AddIcon from "@mui/icons-material/Add";
 import PageConnectionWait from "@/components/Ui/PageConnectionWait";
+import PortfolioParameters from "./components/PortfolioParameters";
 import { useEffect, useState } from "react";
 import { fetchParameters } from "@/app/actions/fetchData";
 import { Parameter } from "@/lib/types/types";
@@ -10,7 +11,6 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import PortfolioParameters from "./components/PortfolioParameters";
 
 const PrmMain: React.FC = () => {
   const [parameters, setParameters] = useState<Parameter[] | null>(null);
@@ -98,7 +98,6 @@ export default PrmMain;
 
 /*
 
-     {parameterType === "portfolio" && <PortflioParameters />}
       {parameterType === "category" && <CategoryParameters />}
       {parameterType === "newParam" && <NewParameter />}
       {parameterType !== "portfolio" &&
