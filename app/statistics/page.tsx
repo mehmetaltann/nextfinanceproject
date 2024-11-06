@@ -5,7 +5,7 @@ export default async function page() {
   return (
     <>
       <Header />
-      <PageWrapper>Hesaplamalar</PageWrapper>
+      <PageWrapper>İstatistikler</PageWrapper>
     </>
   );
 }

@@ -1,3 +1,11 @@
-export default function Home() {
-  return <div>Home</div>;
+import Header from "@/components/Layouts/Header";
+import { PageWrapper } from "@/components/Layouts/Wrappers";
+
+export default async function page() {
+  return (
+    <>
+      <Header />
+      <PageWrapper>Home</PageWrapper>
+    </>
+  );
 }

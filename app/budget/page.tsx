@@ -1,7 +1,11 @@
-import React from 'react'
+import Header from "@/components/Layouts/Header";
+import { PageWrapper } from "@/components/Layouts/Wrappers";
 
-export default function page() {
+export default async function page() {
   return (
-    <div>Bütçe</div>
-  )
+    <>
+      <Header />
+      <PageWrapper>Bütçe</PageWrapper>
+    </>
+  );
 }
