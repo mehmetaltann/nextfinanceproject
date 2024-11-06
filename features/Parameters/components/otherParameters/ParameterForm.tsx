@@ -1,45 +1,43 @@
 import SendIcon from "@mui/icons-material/Send";
-import FormTextField from "../../UI/formElements/FormTextField";
-import { setSnackbar } from "../../../redux/slices/generalSlice";
-import { useDispatch } from "react-redux";
+import FormTextField from "@/components/Ui/FormTextField";
 import { Button, Stack } from "@mui/material";
-import { Form, Formik } from "formik";
-import { useAddParameterContentMutation } from "../../../redux/apis/parameterApi";
+import { Form, Formik, FormikHelpers } from "formik";
+import { addParameterContent } from "@/app/actions/insertData";
+import { handleResponseMsg } from "@/utils/toast-helper";
+import { toast } from "react-toastify";
+import { Parameter } from "@/lib/types/types";
 
-const ParameterForm = ({ formName, addFunction }) => {
-  const dispatch = useDispatch();
-  const [addParameterContent] = useAddParameterContentMutation();
+interface NewRecord {
+  value1: string;
+  title: string;
+  value2: string;
+}
 
-  async function submitHandler(values, { resetForm }) {
-    const newRecord = {
-      variant: formName,
+const ParameterForm = ({ data }: { data: Parameter }) => {
+  const submitHandler = async (
+    values: any,
+    { resetForm }: FormikHelpers<any>
+  ) => {
+    const newRecord: NewRecord = {
+      value1: values.value1,
       title: values.title,
-      value: values.val,
+      value2: "",
     };
+
     try {
-      const res = await addParameterContent(newRecord).unwrap();
+      const response = await addParameterContent(data.variant, newRecord);
+      handleResponseMsg(response);
       resetForm();
-      dispatch(
-        setSnackbar({
-          children: res.message,
-          severity: "success",
-        })
-      );
     } catch (error) {
-      dispatch(
-        setSnackbar({
-          children: error,
-          severity: "error",
-        })
-      );
+      toast.error("İşletme eklenemedi, bir hata oluştu");
     }
-  }
+  };
 
   return (
     <Formik
       initialValues={{
         title: "",
-        val: "",
+        value1: "",
       }}
       onSubmit={submitHandler}
     >
@@ -54,12 +52,14 @@ const ParameterForm = ({ formName, addFunction }) => {
             />
             <FormTextField
               sx={{ maxWidth: 250 }}
-              name="val"
+              name="value1"
               label="Değer"
               size="small"
             />
             <Button
               type="submit"
+              disabled={isSubmitting}
+              size="large"
               sx={{ borderRadius: "5%", minWidth: 120 }}
               variant="contained"
               color={"success"}

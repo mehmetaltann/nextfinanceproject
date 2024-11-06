@@ -1,15 +1,13 @@
-import PageConnectionWait from "../UI/PageConnectionWait";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import Grid from "@mui/material/Grid2";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
+import OnayBox from "@/components/Ui/OnayBox";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setSnackbar } from "../../redux/slices/generalSlice";
-import {
-  useGetParametersQuery,
-  useAddParameterMutation,
-  useDeleteParameterMutation,
-} from "../../redux/apis/parameterApi";
+import { OnayBoxInf, Parameter, ParameterWithoutId } from "@/lib/types/types";
+import { addParameter } from "@/app/actions/insertData";
+import { handleResponseMsg } from "@/utils/toast-helper";
+import { toast } from "react-toastify";
+import { deleteParameter } from "@/app/actions/deleteData";
 import {
   Button,
   Paper,
@@ -25,44 +23,45 @@ import {
   IconButton,
 } from "@mui/material";
 
-const NewParameter = () => {
-  const { data: parameters, isLoading, isFetching } = useGetParametersQuery();
+const NewParameter = ({ data }: { data: Parameter[] }) => {
   const [variant, setVariant] = useState("");
-  const [deleteParameter] = useDeleteParameterMutation();
-  const [addParameter] = useAddParameterMutation();
-  const dispatch = useDispatch();
+  const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
+    isOpen: false,
+    content: "",
+    onClickHandler: async () => {},
+    functionData: {},
+  });
 
-  if (isLoading && isFetching)
-    return <PageConnectionWait title="Veriler Bekleniyor" />;
+  const handleSubmit = async () => {
+    const newRecord: ParameterWithoutId = {
+      variant,
+      content: [],
+    };
 
-  if (!parameters)
-    return <PageConnectionWait title="Server Bağlantısı Kurulamadı" />;
-
-  async function handleSubmit() {
-    const newRecord = { variant, content: [] };
     try {
-      const res = await addParameter(newRecord).unwrap();
-      dispatch(
-        setSnackbar({
-          children: res.message,
-          severity: "success",
-        })
-      );
-      setVariant("");
+      const response = await addParameter(newRecord);
+      handleResponseMsg(response);
     } catch (error) {
-      dispatch(
-        setSnackbar({
-          children: error,
-          severity: "error",
-        })
-      );
+      toast.error("İşletme eklenemedi, bir hata oluştu");
     }
-  }
+  };
+
+  const deleteHandler = async ({ parameterId }: { parameterId: string }) => {
+    try {
+      const res = await deleteParameter(parameterId);
+      handleResponseMsg(res);
+      setOnayBoxInf((prev) => ({ ...prev, isOpen: false }));
+    } catch (error) {
+      toast.error("Parametre Silinemedi, bir hata oluştu");
+    }
+  };
 
   return (
     <Grid container sx={{ width: 800, mt: 2 }} spacing={2}>
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
+      )}
       <Grid>
-        {" "}
         <Stack spacing={2}>
           <Typography>Yeni Parametre</Typography>
           <TextField
@@ -99,37 +98,31 @@ const NewParameter = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {parameters.map((row) => (
+              {data.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell align="left">{row.variant}</TableCell>
                   <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={async () => {
-                        try {
-                          const res = await deleteParameter(row.id).unwrap();
-                          dispatch(
-                            setSnackbar({
-                              children: res.message,
-                              severity: "success",
-                            })
-                          );
-                        } catch (error) {
-                          dispatch(
-                            setSnackbar({
-                              children: error,
-                              severity: "error",
-                            })
-                          );
-                        }
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    {!row.content ||
+                      (row.content.length === 0 && (
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => {
+                            setOnayBoxInf({
+                              isOpen: true,
+                              content: "Ödeme silinsin mi?",
+                              onClickHandler: () =>
+                                deleteHandler({ parameterId: row._id }),
+                              functionData: { parameterId: row._id },
+                            });
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      ))}
                   </TableCell>
                 </TableRow>
               ))}

@@ -2,6 +2,9 @@
 import AddIcon from "@mui/icons-material/Add";
 import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 import PortfolioParameters from "./components/PortfolioParameters";
+import CategoryParameters from "./components/CategoryParameters";
+import OtherParams from "./components/otherParameters/OtherParams";
+import NewParameter from "./components/NewParameter";
 import { useEffect, useState } from "react";
 import { fetchParameters } from "@/app/actions/fetchData";
 import { Parameter } from "@/lib/types/types";
@@ -14,6 +17,9 @@ import {
 
 const PrmMain: React.FC = () => {
   const [parameters, setParameters] = useState<Parameter[] | null>(null);
+  const [filteredData, setFilteredData] = useState<Parameter | undefined>(
+    undefined
+  );
   const [parameterType, setParameterType] = useState<string>("Portfolio");
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -23,6 +29,11 @@ const PrmMain: React.FC = () => {
       try {
         const response: Parameter[] = await fetchParameters();
         setParameters(response);
+        const filteredData = response.find(
+          (item) => item.variant === parameterType
+        );
+
+        setFilteredData(filteredData);
       } catch (error) {
         console.error("Error fetching parameters:", error);
       } finally {
@@ -39,12 +50,6 @@ const PrmMain: React.FC = () => {
   if (!parameters || parameters.length === 0) {
     return <PageConnectionWait title="Server Bağlantısı Kurulamadı" />;
   }
-
-  const filteredData = parameters.find(
-    (item) => item.variant === parameterType
-  );
-
-  console.log(filteredData);
 
   return (
     <>
@@ -88,20 +93,25 @@ const PrmMain: React.FC = () => {
         </ToggleButtonGroup>
       </Stack>
       {parameterType === "Portfolio" && filteredData && (
-        <PortfolioParameters data={filteredData} />
+        <PortfolioParameters
+          data={filteredData}
+          setParameterType={setParameterType}
+        />
       )}
+      {parameterType === "Bütçe Kategori" && filteredData && (
+        <CategoryParameters
+          data={filteredData}
+          setParameterType={setParameterType}
+        />
+      )}
+      {parameterType !== "Portfolio" &&
+        parameterType !== "Bütçe Kategori" &&
+        parameterType !== "newParam" &&
+        filteredData && <OtherParams data={filteredData} />}
+
+      {parameterType === "newParam" && <NewParameter data={parameters} />}
     </>
   );
 };
 
 export default PrmMain;
-
-/*
-
-      {parameterType === "category" && <CategoryParameters />}
-      {parameterType === "newParam" && <NewParameter />}
-      {parameterType !== "portfolio" &&
-        parameterType !== "category" &&
-        parameterType !== "newParam" && <OtherParameter />}
-
-*/

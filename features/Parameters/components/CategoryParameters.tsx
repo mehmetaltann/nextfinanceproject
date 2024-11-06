@@ -1,17 +1,17 @@
-import PageConnectionWait from "../UI/PageConnectionWait";
+import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 import SendIcon from "@mui/icons-material/Send";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import FormTextField from "../UI/formElements/FormTextField";
-import FormikFormSelect from "../../components/investments/form/UI/FormikFormSelect";
-import { Form, Formik, Field } from "formik";
-import { useDispatch } from "react-redux";
-import { setSnackbar } from "../../redux/slices/generalSlice";
-import {
-  useGetCategoriesQuery,
-  useAddCategoryMutation,
-  useDeleteCategoryMutation,
-} from "../../redux/apis/categoryApi.js";
+import Grid from "@mui/material/Grid2";
+import OnayBox from "@/components/Ui/OnayBox";
+import FormTextField from "@/components/Ui/FormTextField";
+import FormikFormSelect from "@/components/Ui/FormikFormSelect";
+import { Form, Formik, Field, FormikHelpers } from "formik";
+import { OnayBoxInf, Parameter } from "@/lib/types/types";
+import { useState } from "react";
+import { addParameterContent } from "@/app/actions/insertData";
+import { handleResponseMsg } from "@/utils/toast-helper";
+import { toast } from "react-toastify";
+import { deleteParameterContent } from "@/app/actions/deleteData";
 import {
   Button,
   Paper,
@@ -27,46 +27,65 @@ import {
   MenuItem,
 } from "@mui/material";
 
-const CategoryParameters = () => {
-  const { data: categories, isLoading, isFetching } = useGetCategoriesQuery();
-  const [deleteCategory] = useDeleteCategoryMutation();
-  const [addCategory] = useAddCategoryMutation();
-  const dispatch = useDispatch();
+interface NewRecord {
+  value1: string;
+  title: string;
+  value2: string;
+}
 
-  if (isLoading && isFetching)
-    return <PageConnectionWait title="Veriler Bekleniyor" />;
+const CategoryParameters = ({
+  data,
+  setParameterType,
+}: {
+  data: Parameter;
+  setParameterType: (data: any) => void;
+}) => {
+  const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
+    isOpen: false,
+    content: "",
+    onClickHandler: async () => {},
+    functionData: {},
+  });
 
-  if (!categories)
-    return <PageConnectionWait title="Server Bağlantısı Kurulamadı" />;
+  if (!data) return <PageConnectionWait title="Veriler Bekleniyor" />;
 
-  async function submitHandler(values, { resetForm }) {
-    const newRecord = {
-      type: values.type,
-      categoryA: values.categoryA,
-      categoryB: values.categoryB,
+  const submitHandler = async (
+    values: any,
+    { resetForm }: FormikHelpers<any>
+  ) => {
+    const newRecord: NewRecord = {
+      value1: values.value1,
+      title: values.title,
+      value2: values.value2,
     };
+
     try {
-      const res = await addCategory(newRecord).unwrap();
+      const response = await addParameterContent(data.variant, newRecord);
+      handleResponseMsg(response);
       resetForm();
-      dispatch(
-        setSnackbar({
-          children: res.message,
-          severity: "success",
-        })
-      );
+      setParameterType(data.variant);
     } catch (error) {
-      dispatch(
-        setSnackbar({
-          children: error,
-          severity: "error",
-        })
-      );
+      toast.error("İşletme eklenemedi, bir hata oluştu");
     }
-  }
+  };
+
+  const deleteHandler = async ({ parameterId }: { parameterId: string }) => {
+    try {
+      const res = await deleteParameterContent(data.variant, parameterId);
+      handleResponseMsg(res);
+      setOnayBoxInf((prev) => ({ ...prev, isOpen: false }));
+      setParameterType(data.variant);
+    } catch (error) {
+      toast.error("Ödeme Silinemedi, bir hata oluştu");
+    }
+  };
 
   return (
     <Grid container spacing={2} sx={{ mt: 2 }}>
-      <Grid>
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
+      )}
+      <Grid size={{ xs: 12, md: 6 }}>
         <Typography
           variant="subtitle1"
           textAlign={"center"}
@@ -77,9 +96,9 @@ const CategoryParameters = () => {
         <Paper>
           <Formik
             initialValues={{
-              type: "",
-              categoryA: "",
-              categoryB: "",
+              title: "",
+              value1: "",
+              value2: "",
             }}
             onSubmit={submitHandler}
           >
@@ -87,7 +106,7 @@ const CategoryParameters = () => {
               <Form>
                 <Stack spacing={3} sx={{ p: 2 }}>
                   <Field
-                    name="type"
+                    name="title"
                     component={FormikFormSelect}
                     label="Tip"
                     minW={150}
@@ -97,13 +116,13 @@ const CategoryParameters = () => {
                   </Field>
                   <FormTextField
                     sx={{ maxWidth: 250 }}
-                    name="categoryA"
+                    name="value1"
                     label="Kategori A"
                     size="small"
                   />
                   <FormTextField
                     sx={{ maxWidth: 250 }}
-                    name="categoryB"
+                    name="value2"
                     label="Kategori B"
                     size="small"
                   />
@@ -124,7 +143,7 @@ const CategoryParameters = () => {
           </Formik>
         </Paper>
       </Grid>
-      <Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Typography
           textAlign={"center"}
           variant="subtitle1"
@@ -143,37 +162,28 @@ const CategoryParameters = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories.map((row) => (
+              {data.content.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.type}
+                    {row.title}
                   </TableCell>
-                  <TableCell align="left">{row.categoryA}</TableCell>
-                  <TableCell align="left">{row.categoryB}</TableCell>
+                  <TableCell align="left">{row.value1}</TableCell>
+                  <TableCell align="left">{row.value2}</TableCell>
                   <TableCell align="center">
                     <IconButton
                       size="small"
                       color="error"
-                      onClick={async () => {
-                        try {
-                          const res = await deleteCategory(row.id).unwrap();
-                          dispatch(
-                            setSnackbar({
-                              children: res.message,
-                              severity: "success",
-                            })
-                          );
-                        } catch (error) {
-                          dispatch(
-                            setSnackbar({
-                              children: error,
-                              severity: "error",
-                            })
-                          );
-                        }
+                      onClick={() => {
+                        setOnayBoxInf({
+                          isOpen: true,
+                          content: "Ödeme silinsin mi?",
+                          onClickHandler: () =>
+                            deleteHandler({ parameterId: row._id }),
+                          functionData: { parameterId: row._id },
+                        });
                       }}
                     >
                       <DeleteIcon />

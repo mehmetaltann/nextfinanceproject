@@ -8,6 +8,32 @@ interface DeleteResponse {
   status: boolean;
 }
 
+export const deleteParameterContent = async (
+  variant: string,
+  parameterId: string
+): Promise<DeleteResponse> => {
+  try {
+    await dbConnect();
+    const result = await ParameterModel.updateOne(
+      { variant },
+      { $pull: { content: { _id: parameterId } } }
+    );
+    if (!result) {
+      return { msg: `Parametre bulunamadı`, status: false };
+    }
+    revalidatePath("/parameters");
+    return { msg: `Parametre başarıyla silindi`, status: true };
+  } catch (error) {
+    console.error(`Silme hatası: ${error}`);
+    return {
+      msg: `Parametre silinemedi: ${
+        error instanceof Error ? error.message : error
+      }`,
+      status: false,
+    };
+  }
+};
+
 export const deleteParameter = async (
   parameterId: string
 ): Promise<DeleteResponse> => {
@@ -17,7 +43,7 @@ export const deleteParameter = async (
     if (!result) {
       return { msg: `Parametre bulunamadı`, status: false };
     }
-    revalidatePath(`/parameters`);
+    revalidatePath("/parameters");
     return { msg: `Parametre başarıyla silindi`, status: true };
   } catch (error) {
     console.error(`Silme hatası: ${error}`);

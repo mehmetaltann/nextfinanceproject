@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import UserModel from "@/lib/models/UserModel";
 import ParameterModel from "@/lib/models/ParameterModel";
 import { revalidatePath } from "next/cache";
-import { Parameter } from "@/lib/types/types";
+import { Parameter, ParameterWithoutId } from "@/lib/types/types";
 
 interface InsertResponse {
   msg: string;
@@ -42,11 +42,36 @@ export const addUser = async (
   }
 };
 
-export const addParameter = async (formData: {
-  value1: string;
-  title: string;
-  value2: string;
-}): Promise<InsertResponse> => {
+export const addParameterContent = async (
+  variant: string,
+  formData: {
+    value1: string;
+    title: string;
+    value2: string;
+  }
+): Promise<InsertResponse> => {
+  try {
+    await dbConnect();
+    await ParameterModel.updateOne(
+      { variant },
+      { $push: { content: formData } },
+      { upsert: true }
+    );
+    revalidatePath("/parameters");
+    return { msg: "Parametre Başarıyla Eklendi", status: true };
+  } catch (error) {
+    return {
+      msg: `Parametre eklenemedi: ${
+        error instanceof Error ? error.message : "Bilinmeyen hata"
+      }`,
+      status: false,
+    };
+  }
+};
+
+export const addParameter = async (
+  formData: ParameterWithoutId
+): Promise<InsertResponse> => {
   try {
     await dbConnect();
     await ParameterModel.create(formData);

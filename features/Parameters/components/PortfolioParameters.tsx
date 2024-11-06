@@ -5,11 +5,11 @@ import Grid from "@mui/material/Grid2";
 import OnayBox from "@/components/Ui/OnayBox";
 import FormTextField from "@/components/Ui/FormTextField";
 import { Form, Formik, FormikHelpers } from "formik";
-import { Parameter } from "@/lib/types/types";
-import { deleteParameter } from "@/app/actions/deleteData";
+import { OnayBoxInf, Parameter } from "@/lib/types/types";
+import { deleteParameterContent } from "@/app/actions/deleteData";
 import { handleResponseMsg } from "@/utils/toast-helper";
 import { toast } from "react-toastify";
-import { addParameter } from "@/app/actions/insertData";
+import { addParameterContent } from "@/app/actions/insertData";
 import { useState } from "react";
 import {
   Button,
@@ -25,23 +25,24 @@ import {
   IconButton,
 } from "@mui/material";
 
-interface OnayBoxInf {
-  isOpen: boolean;
-  content: string;
-  onClickHandler: (data: { parameterId: string }) => Promise<void>;
-}
-
 interface NewRecord {
   value1: string;
   title: string;
   value2: string;
 }
 
-const PortfolioParameters = ({ data }: { data: Parameter }) => {
+const PortfolioParameters = ({
+  data,
+  setParameterType,
+}: {
+  data: Parameter;
+  setParameterType: (data: any) => void;
+}) => {
   const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
     isOpen: false,
     content: "",
     onClickHandler: async () => {},
+    functionData: {},
   });
 
   if (!data) return <PageConnectionWait title="Veriler Bekleniyor" />;
@@ -57,9 +58,10 @@ const PortfolioParameters = ({ data }: { data: Parameter }) => {
     };
 
     try {
-      const response = await addParameter(newRecord);
+      const response = await addParameterContent(data.variant, newRecord);
       handleResponseMsg(response);
       resetForm();
+      setParameterType(data.variant);
     } catch (error) {
       toast.error("İşletme eklenemedi, bir hata oluştu");
     }
@@ -67,11 +69,12 @@ const PortfolioParameters = ({ data }: { data: Parameter }) => {
 
   const deleteHandler = async ({ parameterId }: { parameterId: string }) => {
     try {
-      const res = await deleteParameter(parameterId);
+      const res = await deleteParameterContent(data.variant, parameterId);
       handleResponseMsg(res);
       setOnayBoxInf((prev) => ({ ...prev, isOpen: false }));
+      setParameterType(data.variant);
     } catch (error) {
-      toast.error("Ödeme Silinemedi, bir hata oluştu");
+      toast.error("Parametre Silinemedi, bir hata oluştu");
     }
   };
 
@@ -157,6 +160,7 @@ const PortfolioParameters = ({ data }: { data: Parameter }) => {
                           content: "Ödeme silinsin mi?",
                           onClickHandler: () =>
                             deleteHandler({ parameterId: row._id }),
+                          functionData: { parameterId: row._id },
                         });
                       }}
                     >

@@ -11,18 +11,21 @@ interface OnayBoxProps {
     isOpen: boolean;
     content: string;
     onClickHandler: (data: any) => void;
+    functionData: any;
   };
   setOnayBoxInf: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const OnayBox = ({ onayBoxInf, setOnayBoxInf }: OnayBoxProps) => {
-  const { isOpen, content, onClickHandler } = onayBoxInf;
+  const { isOpen, content, onClickHandler, functionData } = onayBoxInf;
   const handleDialogClose = () => {
     setOnayBoxInf((prevFormData: any) => ({
       ...prevFormData,
       isOpen: false,
     }));
   };
+
+  console.log("deneme");
 
   return (
     <Dialog
@@ -41,7 +44,11 @@ const OnayBox = ({ onayBoxInf, setOnayBoxInf }: OnayBoxProps) => {
         <Button onClick={handleDialogClose} color="error">
           Hayır
         </Button>
-        <Button onClick={() => onClickHandler} color="success" autoFocus>
+        <Button
+          onClick={() => onClickHandler(functionData)}
+          color="success"
+          autoFocus
+        >
           Evet
         </Button>
       </DialogActions>
