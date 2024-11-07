@@ -98,18 +98,8 @@ const PortfolioParameters = ({
             {({ values, isSubmitting }) => (
               <Form>
                 <Stack spacing={3} sx={{ p: 2 }}>
-                  <FormTextField
-                    sx={{ maxWidth: 180 }}
-                    name="value1"
-                    label="Kod"
-                    size="small"
-                  />
-                  <FormTextField
-                    sx={{ maxWidth: 180 }}
-                    name="title"
-                    label="İsim"
-                    size="small"
-                  />
+                  <FormTextField name="value1" label="Kod" size="small" />
+                  <FormTextField name="title" label="İsim" size="small" />
                   <Button
                     type="submit"
                     disabled={isSubmitting}

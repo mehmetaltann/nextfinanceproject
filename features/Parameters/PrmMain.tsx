@@ -14,6 +14,7 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
+import { PageWrapper } from "@/components/Layouts/Wrappers";
 
 const PrmMain: React.FC = () => {
   const [parameters, setParameters] = useState<Parameter[] | null>(null);
@@ -52,9 +53,10 @@ const PrmMain: React.FC = () => {
   }
 
   return (
-    <>
+    <PageWrapper>
       <Stack
-        direction={{ xs: "column", sm: "row" }}
+        direction={{ xs: "column" }}
+        justifyContent={"center"}
         alignItems={{ sm: "center" }}
         spacing={4}
         sx={{ mb: 3 }}
@@ -67,6 +69,7 @@ const PrmMain: React.FC = () => {
             if (newValue !== null) setParameterType(newValue);
           }}
           aria-label="Platform"
+          sx={{ display: "flex", spacing: 4 }}
         >
           {parameters &&
             parameters.map((item) => (
@@ -74,7 +77,7 @@ const PrmMain: React.FC = () => {
                 key={item.variant}
                 color="secondary"
                 value={item.variant}
-                sx={{ minWidth: "12ch", p: 0.8 }}
+                sx={{ minWidth: "12ch", p: 2 }}
                 size="small"
               >
                 {item.variant}
@@ -84,33 +87,34 @@ const PrmMain: React.FC = () => {
           <ToggleButton
             color="secondary"
             value="newParam"
-            sx={{ minWidth: "12ch", p: 0.8 }}
+            sx={{ minWidth: "12ch", p: 2 }}
             size="small"
           >
             <AddIcon fontSize="small" />
             Yeni
           </ToggleButton>
         </ToggleButtonGroup>
-      </Stack>
-      {parameterType === "Portfolio" && filteredData && (
-        <PortfolioParameters
-          data={filteredData}
-          setParameterType={setParameterType}
-        />
-      )}
-      {parameterType === "Bütçe Kategori" && filteredData && (
-        <CategoryParameters
-          data={filteredData}
-          setParameterType={setParameterType}
-        />
-      )}
-      {parameterType !== "Portfolio" &&
-        parameterType !== "Bütçe Kategori" &&
-        parameterType !== "newParam" &&
-        filteredData && <OtherParams data={filteredData} />}
 
-      {parameterType === "newParam" && <NewParameter data={parameters} />}
-    </>
+        {parameterType === "Portfolio" && filteredData && (
+          <PortfolioParameters
+            data={filteredData}
+            setParameterType={setParameterType}
+          />
+        )}
+        {parameterType === "Bütçe Kategori" && filteredData && (
+          <CategoryParameters
+            data={filteredData}
+            setParameterType={setParameterType}
+          />
+        )}
+        {parameterType !== "Portfolio" &&
+          parameterType !== "Bütçe Kategori" &&
+          parameterType !== "newParam" &&
+          filteredData && <OtherParams data={filteredData} />}
+
+        {parameterType === "newParam" && <NewParameter data={parameters} />}
+      </Stack>
+    </PageWrapper>
   );
 };
 

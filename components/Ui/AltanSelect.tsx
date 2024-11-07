@@ -12,7 +12,7 @@ interface AltanSelectProps {
   color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
   minWidth?: string;
   defaultValue?: string;
-  data: Array<Record<string, any>>;
+  data: any;
   dataTextAttr: string;
   dataValueAttr: string;
   isAll?: boolean;
@@ -41,7 +41,7 @@ const AltanSelect: React.FC<AltanSelectProps> = ({
       defaultValue={defaultValue}
       variant={variant}
       value={value}
-      size={size} // This will now only accept "small" or "medium"
+      size={size} 
       color={color}
       onChange={(e) => onChange(e.target.value)}
       sx={{
@@ -57,7 +57,7 @@ const AltanSelect: React.FC<AltanSelectProps> = ({
         </MenuItem>
       )}
       {data.length > 0 ? (
-        data.map((option) => (
+        data.map((option:any) => (
           <MenuItem
             key={option[dataValueAttr]}
             value={option[dataValueAttr]}

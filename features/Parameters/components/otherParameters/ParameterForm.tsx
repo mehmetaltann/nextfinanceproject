@@ -44,18 +44,8 @@ const ParameterForm = ({ data }: { data: Parameter }) => {
       {({ values, isSubmitting }) => (
         <Form>
           <Stack spacing={3} sx={{ p: 2 }}>
-            <FormTextField
-              sx={{ maxWidth: 250 }}
-              name="title"
-              label="İsim"
-              size="small"
-            />
-            <FormTextField
-              sx={{ maxWidth: 250 }}
-              name="value1"
-              label="Değer"
-              size="small"
-            />
+            <FormTextField name="title" label="İsim" size="small" />
+            <FormTextField name="value1" label="Değer" size="small" />
             <Button
               type="submit"
               disabled={isSubmitting}

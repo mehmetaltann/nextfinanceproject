@@ -105,23 +105,16 @@ const CategoryParameters = ({
             {({ values, isSubmitting }) => (
               <Form>
                 <Stack spacing={3} sx={{ p: 2 }}>
-                  <Field
-                    name="title"
-                    component={FormikFormSelect}
-                    label="Tip"
-                    minW={150}
-                  >
+                  <Field name="title" component={FormikFormSelect} label="Tip">
                     <MenuItem value="Gelir">Gelir</MenuItem>
                     <MenuItem value="Gider">Gider</MenuItem>
                   </Field>
                   <FormTextField
-                    sx={{ maxWidth: 250 }}
                     name="value1"
                     label="Kategori A"
                     size="small"
                   />
                   <FormTextField
-                    sx={{ maxWidth: 250 }}
                     name="value2"
                     label="Kategori B"
                     size="small"

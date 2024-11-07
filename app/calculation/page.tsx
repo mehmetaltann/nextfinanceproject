@@ -4,9 +4,9 @@ import { PageWrapper } from "@/components/Layouts/Wrappers";
 import { fetchParameters } from "../actions/fetchData";
 import { Parameter } from "@/lib/types/types";
 
-export default async function page() {
+export default async function Page() {
   try {
-    const allParameters = (await fetchParameters()) as Parameter[];
+    const allParameters: Parameter[] = await fetchParameters();
 
     if (!allParameters || allParameters.length === 0) {
       return (
@@ -19,25 +19,11 @@ export default async function page() {
       );
     }
 
-    const bankData = allParameters.find((item) => item.variant === "Banka");
-    const giderTypeData = allParameters.find(
-      (item) => item.variant === "Gider Türleri"
-    );
-
     return (
       <>
         <Header />
         <PageWrapper>
-          <CalcMain
-            bankaData={bankData ?? { _id: "", variant: "Banka", content: [] }}
-            giderTypeData={
-              giderTypeData ?? {
-                _id: "",
-                variant: "Gider Türleri",
-                content: [],
-              }
-            }
-          />
+          <CalcMain allParameters={allParameters} />
         </PageWrapper>
       </>
     );

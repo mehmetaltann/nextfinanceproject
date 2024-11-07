@@ -57,7 +57,7 @@ const NewParameter = ({ data }: { data: Parameter[] }) => {
   };
 
   return (
-    <Grid container sx={{ width: 800, mt: 2 }} spacing={2}>
+    <Grid container spacing={2}>
       {onayBoxInf.isOpen && (
         <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}

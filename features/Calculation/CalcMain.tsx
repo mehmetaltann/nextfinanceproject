@@ -1,106 +1,115 @@
-import { useState } from "react";
+"use client";
 import Grid from "@mui/material/Grid2";
 import PageConnectionWait from "@/components/Ui/PageConnectionWait";
+import BaseCalculateSheet from "./components/BaseCalculateSheet";
+import BanksCalculateSheets from "./components/BanksCalculateSheets";
+import TotalCalculateSheets from "./components/TotalCalculateSheets";
 import AltanSelect from "@/components/Ui/AltanSelect";
+import { useContext } from "react";
+import { CalcContext } from "@/utils/CalcContext";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { Parameter } from "@/lib/types/types";
-import { PageWrapper } from "@/components/Layouts/Wrappers";
 
-// Tip Tanımlamaları
-type Attr = {
-  value: string;
-  [key: string]: string; // Bu, diğer tüm alanları da kabul etmesine izin verir
-};
-type DataItem = {
-  [key: string]: number; // key'i string olan ve değeri number olan bir nesne
-};
+interface ContentItem {
+  _id: string;
+  title: string;
+  value1: string;
+  value2: string;
+}
 
-interface BankItem {
-  bank: string;
+interface DataListItem {
   [key: string]: number | string;
 }
 
-interface expenseList {
-  value: string;
-  title1: string;
-  title2: string;
+interface Parameter {
   _id: string;
+  variant: string;
+  content: ContentItem[];
 }
 
-function sumByList(
-  attrList: Attr[],
-  dataList: DataItem[]
-): { [key: string]: number }[] {
-  // Tüm attrList değerlerini bir harita oluştur
-  const totalMap = new Map<string, number>(
-    attrList.map((item) => [item.value, 0])
-  );
+interface BankData {
+  bank: string;
+  costing: number;
+  [key: string]: number | string;
+}
 
-  // dataList'i dolaş ve eşleşen anahtarları haritada güncelle
+function sumByList(attrList: ContentItem[], dataList: DataListItem[]) {
+  let totalList = attrList.map((item) => ({
+    value1: item.value1,
+    total: 0,
+  }));
+
   dataList.forEach((item) => {
-    Object.keys(item).forEach((key) => {
-      if (totalMap.has(key)) {
-        totalMap.set(key, totalMap.get(key)! + item[key]); // '!' null veya undefined olmadığını belirtir
-      }
-    });
+    for (let keyItem in item) {
+      totalList.forEach((element, index) => {
+        if (element.value1 === keyItem) {
+          totalList[index].total += item[keyItem] as number;
+        }
+      });
+    }
   });
 
-  // Haritayı { key: value } formatında bir nesne dizisine dönüştür
-  return Array.from(totalMap.entries()).map(([key, total]) => ({
-    [key]: total,
-  }));
+  return totalList.map((item) => ({ [item.value1]: item.total }));
 }
 
 const CalcMain = ({
-  bankaData,
-  giderTypeData,
+  allParameters: parameterData,
 }: {
-  bankaData: Parameter;
-  giderTypeData: Parameter;
+  allParameters: Parameter[];
 }) => {
-  const [data, setData] = useState<DataItem[]>(Array(8).fill({}));
-  const [investmentData, setInvestmentData] = useState<DataItem[]>([{}, {}]);
-  const [budgetData, setBudgetData] = useState<DataItem[]>([{}, {}]);
-  const [bankData, setBankData] = useState<BankItem[]>([]);
-  const [totalData, setTotalData] = useState<DataItem[]>([]);
-  const [selectedBank, setSelectedBank] = useState<string>("VB");
+  const context = useContext(CalcContext);
 
-  // Veriler gelmediyse loading ekranını göster
-  if (!bankaData || !giderTypeData)
-    return <PageConnectionWait title="Veriler Bekleniyor" />;
-
-  // Parametre verisini almak
-  const expenseList = giderTypeData.content;
-  const banksList = bankaData.content;
-
-  // Banka verilerini güncelleme
-  async function handleTotalData(bankDATAS: DataItem[]) {
-    const summedList = sumByList(expenseList, bankDATAS);
-
-    const newTotalObject: DataItem & { costing: number } = {
-      ...Object.assign({}, ...summedList),
-    };
-
-    // "costing" değeri hesaplanıyor
-    newTotalObject["costing"] = +Object.values(newTotalObject)
-      .reduce((a, b) => a + b, 0)
-      .toFixed(2);
-
-    setTotalData([newTotalObject]); // Total verisini güncelle
+  if (!context) {
+    throw new Error("CalcContext must be used within a CalcContextProvider");
   }
 
-  // Hesaplama işlemini yapma
-  async function calculateHandle() {
-    const newBankObject: DataItem & { costing: number; bank: string } =
-      Object.assign({}, ...sumByList(expenseList, data));
+  const {
+    selectedBank,
+    setSelectedBank,
+    data,
+    bankData,
+    setBankData,
+    setData,
+    setTotalData,
+  } = context;
 
-    newBankObject["costing"] = +Object.values(newBankObject)
+  if (!parameterData)
+    return <PageConnectionWait title="Server Bağlantısı Kurulamadı" />;
+
+  const expenseList = parameterData.find(
+    (item) => item.variant === "Gider Türleri"
+  );
+  const banksList = parameterData.find((item) => item.variant === "Banka");
+
+  if (!expenseList || !banksList || !banksList.content) {
+    return <PageConnectionWait title="Veriler Yüklenemedi" />;
+  }
+
+  const handleTotalData = (bankDATAS: DataListItem[]) => {
+    const newTotalObject: any = Object.assign(
+      {},
+      ...sumByList(expenseList.content, bankDATAS)
+    );
+    newTotalObject["costing"] = +(Object.values(newTotalObject) as number[])
       .reduce((a, b) => a + b, 0)
       .toFixed(2);
 
-    const bankName =
-      banksList.find((item) => item.value === selectedBank)?.title ||
-      "Unknown Bank"; // Seçili banka adı
+    setTotalData([newTotalObject]);
+  };
+
+  const calculateHandle = () => {
+    const newBankObject: any = Object.assign(
+      {},
+      ...sumByList(expenseList.content, data)
+    );
+    newBankObject["costing"] = +(Object.values(newBankObject) as number[])
+      .reduce((a, b) => a + b, 0)
+      .toFixed(2);
+
+    const bankName = banksList.content.find(
+      (item) => item.value1 === selectedBank
+    )?.title;
+
+    if (!bankName) return; // Ensure bankName is found before proceeding
 
     newBankObject["bank"] = bankName;
 
@@ -109,66 +118,72 @@ const CalcMain = ({
     );
 
     if (!bankObject) {
-      const newBankData = [newBankObject, ...bankData];
+      const newBankData: BankData[] = [newBankObject, ...bankData];
       setBankData(newBankData);
       handleTotalData(newBankData);
-      setData(Array(8).fill({}));
+      setData([{}, {}, {}, {}, {}, {}, {}, {}]);
     } else {
-      const mergedObject = [
-        ...Object.entries(newBankObject),
-        ...Object.entries(bankObject),
-      ].reduce(
-        (acc, [key, val]) => ({ ...acc, [key]: (acc[key] || 0) + Number(val) }),
-        {} as DataItem & { bank: string }
+      const mergedObject: any = Object.entries(newBankObject).reduce(
+        (acc: { [key: string]: number }, [key, val]) => {
+          acc[key] = (acc[key] || 0) + (typeof val === "number" ? val : 0);
+          return acc;
+        },
+        {}
       );
+
       mergedObject["bank"] = bankName;
 
-      const newBankData = bankData.filter((item) => item.bank !== bankName);
+      const newBankData: any = bankData.filter(
+        (item) => item.bank !== bankName
+      );
       newBankData.push(mergedObject);
+
       setBankData(newBankData);
       handleTotalData(newBankData);
-      setData(Array(8).fill({}));
+      setData([{}, {}, {}, {}, {}, {}, {}, {}]);
     }
-  }
+  };
 
   return (
-    <PageWrapper maxWidth="xl">
-      <Grid container>
-        <Grid>
-          <Stack direction="row" spacing={2} alignItems={"center"}>
-            <AltanSelect
-              id="bank"
-              defaultValue="VB"
-              value={selectedBank}
-              minWidth="20ch"
-              onChange={setSelectedBank}
-              data={banksList}
-              dataTextAttr="title"
-              dataValueAttr="value"
-              label="Banka"
-            />
-            <Button
-              variant="contained"
-              onClick={calculateHandle}
-              sx={{ minWidth: "15ch" }}
-            >
-              Ekle
-            </Button>
-          </Stack>
-        </Grid>
-        <Grid>
-          <Box sx={{ p: 1 }}>
-            {/* Burada BaseCalculateSheet, BanksCalculateSheets ve TotalCalculateSheets gibi bileşenler olmalı */}
-          </Box>
-        </Grid>
-        <Grid>
-          <Typography>Toplam</Typography>
-          <Box sx={{ p: 1 }}>
-            {/* Burada TotalCalculateSheets bileşeni olmalı */}
-          </Box>
-        </Grid>
+    <Grid container>
+      <Grid size={{ xs: 12 }}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <AltanSelect
+            id="bank"
+            defaultValue="VB"
+            value={selectedBank}
+            minWidth="20ch"
+            onChange={setSelectedBank}
+            data={banksList.content}
+            dataTextAttr="title"
+            dataValueAttr="value1"
+          />
+          <Button
+            variant="contained"
+            onClick={calculateHandle}
+            sx={{ minWidth: "15ch" }}
+          >
+            Ekle
+          </Button>
+        </Stack>
       </Grid>
-    </PageWrapper>
+      <Grid size={{ xs: 12 }}>
+        <Box sx={{ p: 1 }}>
+          <BaseCalculateSheet expenseList={expenseList} />
+        </Box>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
+        <Box sx={{ p: 1 }}>
+          <BanksCalculateSheets expenseList={expenseList} />
+        </Box>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
+        <Typography>Toplam</Typography>
+        <Box sx={{ p: 1 }}>
+          <TotalCalculateSheets expenseList={expenseList} />
+        </Box>
+      </Grid>
+    </Grid>
   );
 };
 

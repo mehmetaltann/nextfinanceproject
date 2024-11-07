@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import type { Metadata } from "next";
 import { AuthProvider } from "./provider";
 import "react-toastify/dist/ReactToastify.css";
+
 import "./globals.css";
 
 const myFont = localFont({
