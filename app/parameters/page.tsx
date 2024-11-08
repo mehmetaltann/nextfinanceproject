@@ -6,7 +6,7 @@ export default async function page() {
   return (
     <>
       <Header />
-      <PageWrapper>
+      <PageWrapper maxW="lg">
         <PrmMain />
       </PageWrapper>
     </>

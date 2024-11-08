@@ -1,4 +1,3 @@
-"use client";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DataForm from "./DataForm";
 import { useState } from "react";
@@ -20,8 +19,9 @@ const style = {
   overflowY: "auto",
 };
 
-interface BudgetHeaderProps {
+interface DataFormContainersProps {
   categoriesData: Parameter | undefined;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface OpenState {
@@ -29,9 +29,11 @@ interface OpenState {
   type: "Gelir" | "Gider";
 }
 
-const DataFormContainers: React.FC<BudgetHeaderProps> = ({ categoriesData }) => {
+const DataFormContainers: React.FC<DataFormContainersProps> = ({
+  categoriesData,
+  setUpdate
+}) => {
   const [open, setOpen] = useState<OpenState>({ state: false, type: "Gelir" });
-
   const handleGelirOpen = () => setOpen({ state: true, type: "Gelir" });
   const handleGiderOpen = () => setOpen({ state: true, type: "Gider" });
   const handleClose = () => setOpen({ state: false, type: "Gelir" });
@@ -76,6 +78,7 @@ const DataFormContainers: React.FC<BudgetHeaderProps> = ({ categoriesData }) => 
               openType={open.type}
               categories={categoriesData}
               closeModel={handleClose}
+              setUpdate={setUpdate}
             />
           </Stack>
         </Box>

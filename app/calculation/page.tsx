@@ -12,7 +12,7 @@ export default async function Page() {
       return (
         <>
           <Header />
-          <PageWrapper>
+          <PageWrapper maxW="xl">
             <div>Veriler yüklenirken bir hata oluştu veya veri bulunamadı.</div>
           </PageWrapper>
         </>
@@ -22,7 +22,7 @@ export default async function Page() {
     return (
       <>
         <Header />
-        <PageWrapper>
+        <PageWrapper maxW="xl">
           <CalcMain allParameters={allParameters} />
         </PageWrapper>
       </>
@@ -32,7 +32,7 @@ export default async function Page() {
     return (
       <>
         <Header />
-        <PageWrapper>
+        <PageWrapper maxW="xl">
           <div>
             Sunucu bağlantısı kurulamadı. Lütfen daha sonra tekrar deneyin.
           </div>

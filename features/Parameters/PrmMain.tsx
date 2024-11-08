@@ -53,7 +53,7 @@ const PrmMain: React.FC = () => {
   }
 
   return (
-    <PageWrapper>
+    <PageWrapper maxW="lg">
       <Stack
         direction={{ xs: "column" }}
         justifyContent={"center"}

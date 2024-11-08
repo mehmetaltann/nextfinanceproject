@@ -66,7 +66,7 @@ export const deleteBudgetItem = async (
     if (!result) {
       return { msg: `Bütçe Kalemi bulunamadı`, status: false };
     }
-    revalidatePath("/budget");
+    revalidatePath("/");
     return { msg: `Bütçe Kalemi başarıyla silindi`, status: true };
   } catch (error) {
     console.error(`Silme hatası: ${error}`);

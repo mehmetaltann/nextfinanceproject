@@ -1,9 +1,9 @@
 export type BudgetItem = {
-  _id: string;
+  id: string;
   title: string;
   amount: number;
   type: string;
-  date: Date;
+  date: string;
   categoryA: string;
   categoryB: string;
   description: string;

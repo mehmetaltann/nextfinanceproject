@@ -2,8 +2,8 @@ import Grid from "@mui/material/Grid2";
 import DataTable from "./DataTable";
 import AltanSelect from "@/components/Ui/AltanSelect";
 import { ToggleButton, ToggleButtonGroup, Paper, Stack } from "@mui/material";
-import { useState } from "react";
 import { DataTableWrapper } from "@/components/Layouts/Wrappers";
+import { BudgetItem } from "@/lib/types/types";
 
 export const historyPick = [
   { value: "1", label: "Son 1 Ay" },
@@ -14,10 +14,23 @@ export const historyPick = [
   { value: "0", label: "Tümü" },
 ];
 
-const DataTableContainer = () => {
-  const [selectedDate, setSelectedDate] = useState("2");
-  const [selectedBudgetType, setSelectedBudgetType] = useState("Tümü");
+interface DataTableContainerProps {
+  selectedBudgetType: string;
+  selectedDate: string;
+  setSelectedBudgetType: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
+  budgetItems: BudgetItem[];
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
+const DataTableContainer: React.FC<DataTableContainerProps> = ({
+  selectedBudgetType,
+  selectedDate,
+  setSelectedBudgetType,
+  setSelectedDate,
+  budgetItems,
+  setUpdate,
+}) => {
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
       <Grid container spacing={2}>
@@ -33,7 +46,9 @@ const DataTableContainer = () => {
               <ToggleButtonGroup
                 value={selectedBudgetType}
                 exclusive
-                onChange={(e) => setSelectedBudgetType(e.target.value)}
+                onChange={(e, newValue) => {
+                  setSelectedBudgetType(newValue);
+                }}
                 aria-label="Platform"
               >
                 <ToggleButton
@@ -83,7 +98,11 @@ const DataTableContainer = () => {
         </Grid>
         <Grid container size={{ xs: 12 }}>
           <DataTableWrapper tableHeight={"68vh"} sx={{ p: { xs: 0, md: 1 } }}>
-            <DataTable />
+            <DataTable
+              selectedBudgetType={selectedBudgetType}
+              budgetItems={budgetItems}
+              setUpdate={setUpdate}
+            />
           </DataTableWrapper>
         </Grid>
       </Grid>

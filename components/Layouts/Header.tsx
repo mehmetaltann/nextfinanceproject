@@ -25,9 +25,8 @@ interface Page {
 }
 
 const pages: Page[] = [
-  { title: "ANASAYFA", link: "/" },
-  { title: "BÜTÇE", link: "budget" },
-  { title: "YATIRIMLAR", link: "investments" },
+  { title: "BÜTÇE", link: "/" },
+  { title: "HESAPLAMA İŞLEMLERİ", link: "calculation" },
   { title: "İSTATİSTİKLER", link: "statistics" },
 ];
 
@@ -181,10 +180,9 @@ const NavBar: React.FC = () => {
               >
                 <Image
                   src={profileImg}
-                  height={"50"}
-                  width={"50"}
+                  height={"40"}
+                  width={"40"}
                   alt="profilepic"
-                  objectFit="cover"
                 />
               </Box>
             </IconButton>
@@ -205,12 +203,6 @@ const NavBar: React.FC = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={() => router.push("/calculation")}>
-                <Link href={"/calculation"} style={{ textDecoration: "none" }}>
-                  <Typography textAlign="center">Hesaplama</Typography>
-                </Link>
-              </MenuItem>
-
               <MenuItem onClick={() => router.push("/parameters")}>
                 <Link href={"/parameters"} style={{ textDecoration: "none" }}>
                   <Typography textAlign="center">Parametreler</Typography>
@@ -218,7 +210,10 @@ const NavBar: React.FC = () => {
               </MenuItem>
 
               <MenuItem onClick={() => router.push("/register")}>
-                <Link href={"/register"} style={{ textDecoration: "none", color:"black" }}>
+                <Link
+                  href={"/register"}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
                   <Typography textAlign="center">Yeni Kullanıcı</Typography>
                 </Link>
               </MenuItem>

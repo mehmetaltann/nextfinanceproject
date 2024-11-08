@@ -19,6 +19,7 @@ interface DataFormProps {
   categories: Parameter | undefined;
   openType: string;
   closeModel: () => void;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface BudgetInfo {
@@ -46,6 +47,7 @@ const DataForm: React.FC<DataFormProps> = ({
   openType,
   categories,
   closeModel,
+  setUpdate,
 }) => {
   const initialButceDataMemo = useMemo(() => initialButceData, []);
 
@@ -67,6 +69,7 @@ const DataForm: React.FC<DataFormProps> = ({
       const res = await addBudgetItems(yeniKayitListesi);
       handleResponseMsg(res);
       closeModel();
+      setUpdate(true);
     } catch (error) {
       toast.error("Bütçe Kalemi Eklenemedi, Bir hata oluştu: " + error);
     }

@@ -16,7 +16,7 @@ const BudgetItemSchema = new Schema<BudgetItem>(
       required: true,
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
       trim: true,
     },
@@ -40,6 +40,7 @@ const BudgetItemSchema = new Schema<BudgetItem>(
 );
 
 const BudgetItemModel: Model<BudgetItem> =
-  mongoose.models?.budgetitem || mongoose.model<BudgetItem>("budgetitem", BudgetItemSchema);
+  mongoose.models?.budgetitem ||
+  mongoose.model<BudgetItem>("budgetitem", BudgetItemSchema);
 
 export default BudgetItemModel;

@@ -3,13 +3,9 @@ import dbConnect from "@/lib/db/dbConnect";
 import bcrypt from "bcryptjs";
 import UserModel from "@/lib/models/UserModel";
 import ParameterModel from "@/lib/models/ParameterModel";
-import { revalidatePath } from "next/cache";
-import {
-  BudgetItemWithoutId,
-  Parameter,
-  ParameterWithoutId,
-} from "@/lib/types/types";
 import BudgetItemModel from "@/lib/models/BudgetItemModel";
+import { revalidatePath } from "next/cache";
+import { BudgetItemWithoutId, ParameterWithoutId } from "@/lib/types/types";
 
 interface InsertResponse {
   msg: string;
@@ -98,7 +94,7 @@ export const addBudgetItems = async (
   try {
     await dbConnect();
     await BudgetItemModel.insertMany(formData);
-    revalidatePath("/budget");
+    revalidatePath("/");
     return { msg: "Bütçe Kalemleri Başarıyla Eklendi", status: true };
   } catch (error) {
     return {

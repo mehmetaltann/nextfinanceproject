@@ -1,7 +1,6 @@
 "use server";
 import dbConnect from "@/lib/db/dbConnect";
 import BudgetItemModel from "@/lib/models/BudgetItemModel";
-import ParameterModel from "@/lib/models/ParameterModel";
 import { revalidatePath } from "next/cache";
 
 interface UpdateResponse {
@@ -10,16 +9,19 @@ interface UpdateResponse {
 }
 
 export const updateBudgetItem = async (
-  budegetItemId: string
+  budegetItemId: string,
   formData: any
 ): Promise<UpdateResponse> => {
   try {
     await dbConnect();
-    const result = await BudgetItemModel.findByIdAndUpdate(budegetItemId,formData);
+    const result = await BudgetItemModel.findByIdAndUpdate(
+      budegetItemId,
+      formData
+    );
     if (!result) {
       return { msg: `Bütçe Kalemi bulunamadı`, status: false };
     }
-    revalidatePath("/budget");
+    revalidatePath("/");
     return { msg: `Bütçe Kalemi başarıyla güncellendi`, status: true };
   } catch (error) {
     console.error(`Silme hatası: ${error}`);
