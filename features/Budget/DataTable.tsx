@@ -1,38 +1,18 @@
+
 import DeleteIcon from "@mui/icons-material/Delete";
-import PaidIcon from "@mui/icons-material/Paid";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import CarRepairIcon from "@mui/icons-material/CarRepair";
-import CheckroomIcon from "@mui/icons-material/Checkroom";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
-import LocalDiningIcon from "@mui/icons-material/LocalDining";
-import WaterDropIcon from "@mui/icons-material/WaterDrop";
-import ElectricalServicesIcon from "@mui/icons-material/ElectricalServices";
-import PropaneTankIcon from "@mui/icons-material/PropaneTank";
-import SchoolIcon from "@mui/icons-material/School";
-import ConnectedTvIcon from "@mui/icons-material/ConnectedTv";
-import PoolIcon from "@mui/icons-material/Pool";
-import OtherHousesIcon from "@mui/icons-material/OtherHouses";
-import LocalAtmIcon from "@mui/icons-material/LocalAtm";
-import NightlifeIcon from "@mui/icons-material/Nightlife";
-import EventRepeatIcon from "@mui/icons-material/EventRepeat";
+
 import { useState, useCallback } from "react";
+
+
 import { IconButton } from "@mui/material";
-import {
-  stringColumn,
-  dateColumn,
-  priceColumn,
-  actionColumn,
-} from "@/components/Tables/columns";
+
 import OnayBox from "@/components/Ui/OnayBox";
 import { BudgetItemWithoutId, OnayBoxInf } from "@/lib/types/types";
 import { toast } from "react-toastify";
 import { handleResponseMsg } from "@/utils/toast-helper";
+import iconMapper from "@/utils/iconmapper";
 import DataTableFrame from "@/components/Tables/DataTableFrame";
+import { actionColumn, dateColumn, priceColumn, stringColumn } from "@/components/Tables/columns";
 import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 
 const useFakeMutation = () => {
@@ -62,8 +42,7 @@ const DataTable = () => {
   });
 
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
-  const [deleteBudgetItem] = useDeleteBudgetItemMutation();
-  const [updateBudgetItem] = useUpdateBudgetItemMutation();
+
   const { selectedDate, selectedBudgetType } = useSelector(
     (state) => state.general
   );
@@ -131,65 +110,8 @@ const DataTable = () => {
       align: "left",
       filterable: false,
       width: 10,
-      renderCell: (params) => {
-        if (params.row.categoryA === "Aylık Gelirler") {
-          return <PaidIcon color="success" />;
-        } else if (params.row.categoryB === "Sena") {
-          return <FavoriteIcon color="success" />;
-        } else if (params.row.categoryA === "İlave Gelirler") {
-          return <AttachMoneyIcon color="success" />;
-        } else if (params.row.categoryB === "Araç") {
-          return <CarRepairIcon color="error" />;
-        } else if (params.row.categoryB === "Giyim") {
-          return <CheckroomIcon color="error" />;
-        } else if (params.row.categoryB === "Market") {
-          return <ShoppingCartIcon color="error" />;
-        } else if (params.row.categoryB === "Telefon") {
-          return <PhoneIphoneIcon color="error" />;
-        } else if (params.row.categoryA === "Birikim") {
-          return <AddBusinessIcon color="error" />;
-        } else if (params.row.categoryB === "Kredi") {
-          return <AccountBalanceIcon color="error" />;
-        } else if (params.row.categoryB === "Sağlık") {
-          return <MonitorHeartIcon color="error" />;
-        } else if (params.row.categoryB === "Hazır Yemek") {
-          return <LocalDiningIcon color="error" />;
-        } else if (params.row.categoryB === "Su") {
-          return <WaterDropIcon color="error" />;
-        } else if (params.row.categoryB === "Elektrik") {
-          return <ElectricalServicesIcon color="error" />;
-        } else if (params.row.categoryB === "Doğalgaz") {
-          return <PropaneTankIcon color="error" />;
-        } else if (
-          params.row.categoryB === "Eğitim-Kitap" ||
-          params.row.categoryB === "Okul Aidatı"
-        ) {
-          return <SchoolIcon color="error" />;
-        } else if (params.row.categoryB === "İnternet-TV") {
-          return <ConnectedTvIcon color="error" />;
-        } else if (params.row.categoryB === "Tatil") {
-          return <PoolIcon color="error" />;
-        } else if (
-          params.row.categoryB === "Ev Eşyası" ||
-          params.row.categoryB === "Ev Tadilat" ||
-          params.row.categoryB === "Site Yakıt" ||
-          params.row.categoryB === "Site Aidat"
-        ) {
-          return <OtherHousesIcon color="error" />;
-        } else if (
-          params.row.categoryB === "Borç" ||
-          params.row.categoryB === "Diğer" ||
-          params.row.categoryB === "Kira"
-        ) {
-          return <AttachMoneyIcon color="error" />;
-        } else if (params.row.categoryB === "ATM Nakit") {
-          return <LocalAtmIcon color="error" />;
-        } else if (params.row.categoryB === "Eğlence-Oyun") {
-          return <NightlifeIcon color="error" />;
-        } else {
-          return <EventRepeatIcon color="error" />;
-        }
-      },
+      renderCell: (params) =>
+        (iconMapper[params.row.categoryB] || iconMapper.default)(),
     },
     stringColumn("title", "İşlem", 170, {
       cellClassName: "boldandcolorcell",
