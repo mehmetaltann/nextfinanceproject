@@ -47,6 +47,7 @@ const DataTableFrame = (props: any) => {
         "& .header": {
           color: "primary.main",
           fontWeight: "600",
+          py: 1,
         },
         ".highlight": {
           bgcolor: "#DDDDDD",
@@ -54,15 +55,10 @@ const DataTableFrame = (props: any) => {
             bgcolor: "#EEEEEE",
           },
         },
-        "&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell": {
+        "&.MuiDataGrid-root--densityCompact .asdasdasd": {
           py: 1,
         },
-        "&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell": {
-          py: "9px",
-        },
-        "&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell": {
-          py: "22px",
-        },
+
         ...sxProps,
       }}
       disableRowSelectionOnClick

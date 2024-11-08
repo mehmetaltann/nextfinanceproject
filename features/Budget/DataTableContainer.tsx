@@ -93,11 +93,12 @@ const DataTableContainer: React.FC<DataTableContainerProps> = ({
               data={historyPick}
               dataTextAttr="label"
               dataValueAttr="value"
+              color="success"
             />
           </Grid>
         </Grid>
         <Grid container size={{ xs: 12 }}>
-          <DataTableWrapper tableHeight={"68vh"} sx={{ p: { xs: 0, md: 1 } }}>
+          <DataTableWrapper tableHeight={"65vh"} sx={{ p: { xs: 0, md: 0 } }}>
             <DataTable
               selectedBudgetType={selectedBudgetType}
               budgetItems={budgetItems}

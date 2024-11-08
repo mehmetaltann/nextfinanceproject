@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const myFont = localFont({
-  src: "../lib/fonts/Roboto-Medium.ttf",
+  src: "../lib/fonts/Geist.ttf",
   variable: "--font-roboto",
 });
 

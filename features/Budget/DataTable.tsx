@@ -124,6 +124,7 @@ const DataTable: React.FC<DataTableProps> = ({
       headerAlign: "center",
       headerClassName: "header",
       align: "left",
+      cellClassName: "asdasdasd",
       filterable: false,
       width: 10,
       renderCell: (params: any) => {
@@ -207,23 +208,26 @@ const DataTable: React.FC<DataTableProps> = ({
     }),
     stringColumn("description", "Açıklama", 200, { editable: true }),
     actionColumn({
-      renderCell: (params: any) => (
-        <IconButton
-          size="small"
-          color="error"
-          onClick={() => {
-            setOnayBoxInf({
-              isOpen: true,
-              content: "Bütçe Kalemi silinsin mi?",
-              onClickHandler: () =>
-                budgetItemDeleteHandler({ budgetItemId: params.row.id }),
-              functionData: { budgetItemId: params.row.id } as any,
-            });
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      ),
+      renderCell: (params: any) => {
+        return (
+          <IconButton
+            key={params.row.id}
+            size="small"
+            color="error"
+            onClick={() => {
+              setOnayBoxInf({
+                isOpen: true,
+                content: "Bütçe Kalemi silinsin mi?",
+                onClickHandler: () =>
+                  budgetItemDeleteHandler({ budgetItemId: params.row.id }),
+                functionData: { budgetItemId: params.row.id } as any,
+              });
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        );
+      },
     }),
   ];
 
@@ -233,16 +237,13 @@ const DataTable: React.FC<DataTableProps> = ({
         <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}
       <DataTableFrame
-        getRowHeight={() => "auto"}
-        getEstimatedRowHeight={() => 100}
-        density="standard"
         columns={columns}
         data={filteredData}
         disableColumnResize
         disableDensitySelector
-        disableColumnFilter
         processRowUpdate={processRowUpdate}
         onProcessRowUpdateError={handleProcessRowUpdateError}
+        checkboxSelection
       />
     </div>
   );
