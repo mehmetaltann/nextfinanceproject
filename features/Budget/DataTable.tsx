@@ -1,6 +1,4 @@
-import BudgetDataTableFooter from "./DataTableFooter";
 import DeleteIcon from "@mui/icons-material/Delete";
-import DataTableFrame from "../../UI/table/DataTableFrame";
 import PaidIcon from "@mui/icons-material/Paid";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -22,33 +20,32 @@ import OtherHousesIcon from "@mui/icons-material/OtherHouses";
 import LocalAtmIcon from "@mui/icons-material/LocalAtm";
 import NightlifeIcon from "@mui/icons-material/Nightlife";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
-import PageConnectionWait from "../../UI/PageConnectionWait";
 import { useState, useCallback } from "react";
-import { dateFormatNormal } from "../../../utils/help-functions";
-import { useSelector, useDispatch } from "react-redux";
-import { setSnackbar } from "../../../redux/slices/generalSlice";
 import { IconButton } from "@mui/material";
-import {
-  useGetBudgetItemsQuery,
-  useDeleteBudgetItemMutation,
-  useUpdateBudgetItemMutation,
-} from "../../../redux/apis/budgetApi";
 import {
   stringColumn,
   dateColumn,
   priceColumn,
   actionColumn,
-} from "../../UI/table/columns";
+} from "@/components/Tables/columns";
+import OnayBox from "@/components/Ui/OnayBox";
+import { BudgetItemWithoutId, OnayBoxInf } from "@/lib/types/types";
+import { toast } from "react-toastify";
+import { handleResponseMsg } from "@/utils/toast-helper";
+import DataTableFrame from "@/components/Tables/DataTableFrame";
+import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 
 const useFakeMutation = () => {
   return useCallback(
-    (item) =>
-      new Promise((resolve, reject) => {
+    (item: BudgetItemWithoutId) =>
+      new Promise<BudgetItemWithoutId>((resolve, reject) => {
         setTimeout(() => {
-          if (item.title?.trim() === "") {
-            reject(new Error("İşlem Konusu Boş Olamaz"));
+          if (item.?title.trim() === "") {
+            reject(new Error("Gider Adı No Boş Olamaz"));
           } else {
-            resolve({ ...item, title: item.title });
+            resolve({
+              ...item,
+            });
           }
         }, 200);
       }),
@@ -57,7 +54,12 @@ const useFakeMutation = () => {
 };
 
 const DataTable = () => {
-  const dispatch = useDispatch();
+  const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
+    isOpen: false,
+    content: "",
+    onClickHandler: async () => {},
+    functionData: {},
+  });
 
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const [deleteBudgetItem] = useDeleteBudgetItemMutation();
@@ -67,12 +69,6 @@ const DataTable = () => {
   );
 
   const mutateRow = useFakeMutation();
-
-  const {
-    data: budgetItems,
-    isLoading,
-    isFetching,
-  } = useGetBudgetItemsQuery(selectedDate);
 
   const processRowUpdate = useCallback(
     async (newRow) => {
@@ -97,18 +93,27 @@ const DataTable = () => {
         );
       }
     },
-    [mutateRow, dispatch, updateBudgetItem]
+    [mutateRow]
   );
 
-  const handleProcessRowUpdateError = useCallback(
-    (error) => {
-      dispatch(setSnackbar({ children: error.message, severity: "error" }));
-    },
-    [dispatch]
-  );
+  const budgetItemDeleteHandler = async ({
+    budgetItemId
+  }: {
+    budgetItemId: string;
+  }) => {
+    try {
+      const res = await deleteBudgetItem (budgetItemId);
+      handleResponseMsg(res);
+      setOnayBoxInf((prev) => ({ ...prev, isOpen: false }));
+    } catch (error) {
+      toast.error(`Bütçe Kalemi Silinemedi, Bir hata oluştu : ${error}`);
+    }
+  };
 
-  if (isLoading && isFetching)
-    return <PageConnectionWait title="Veriler Bekleniyor" />;
+  const handleProcessRowUpdateError = useCallback((error: Error) => {
+    toast.error(error.message);
+  }, []);
+
 
   if (!budgetItems)
     return <PageConnectionWait title="Server Bağlantısı Kurulamadı" />;
@@ -196,7 +201,7 @@ const DataTable = () => {
     }),
     stringColumn("categoryA", "Kategori A", 130),
     stringColumn("categoryB", "Kategori B", 130),
-    dateColumn("date", "Tarih", 100 ),
+    dateColumn("date", "Tarih", 100),
     priceColumn("amount", "Tutar", 150, {
       cellClassName: "boldandcolorcell",
       editable: true,
@@ -210,53 +215,43 @@ const DataTable = () => {
       renderCell: (params, index) => {
         return (
           <IconButton
-            key={index}
-            size="small"
-            color="error"
-            onClick={async () => {
-              try {
-                const res = await deleteBudgetItem(params.row.id).unwrap();
-                dispatch(
-                  setSnackbar({
-                    children: res.message,
-                    severity: "success",
-                  })
-                );
-              } catch (error) {
-                dispatch(
-                  setSnackbar({
-                    children: error,
-                    severity: "success",
-                  })
-                );
-              }
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
+              size="small"
+              color="primary"
+              onClick={() => {
+                setOnayBoxInf({
+                  isOpen: true,
+                  content: "Bütçe Kalemi silinsin mi?",
+                  onClickHandler: () =>
+                    budgetItemDeleteHandler({ params.row.id }),
+                  functionData: { params.row.id },
+                });
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
         );
       },
     }),
   ];
 
   return (
+    <div style={{ height: "100%", width: "100%" }}>
+    {onayBoxInf.isOpen && (
+      <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
+    )}
     <DataTableFrame
+      getRowHeight={() => "auto"}
+      getEstimatedRowHeight={() => 100}
+      density="standard"
       columns={columns}
-      rows={filteredData}
+      data={filteredData}
+      disableColumnResize
+      disableDensitySelector
+      disableColumnFilter
       processRowUpdate={processRowUpdate}
       onProcessRowUpdateError={handleProcessRowUpdateError}
-      slotsProps={{
-        footer: BudgetDataTableFooter,
-      }}
-      slotSPropProps={{
-        footer: { filteredData, rowSelectionModel },
-      }}
-      onRowSelectionModelChange={(newRowSelectionModel) => {
-        setRowSelectionModel(newRowSelectionModel);
-      }}
-      rowSelectionModel={rowSelectionModel}
-      checkboxSelection
     />
+    </div>
   );
 };
 

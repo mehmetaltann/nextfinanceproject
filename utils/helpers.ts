@@ -47,3 +47,10 @@ export const getChangedValues = <T extends Record<string, any>>(
     return acc;
   }, {} as Partial<T>);
 };
+
+export const uniqListFunc = <T extends Record<string, any>>(
+  arr: T[],
+  att: keyof T,
+  track: Set<any> = new Set()
+): T[] =>
+  arr.filter((cat) => (track.has(cat[att]) ? false : track.add(cat[att])));

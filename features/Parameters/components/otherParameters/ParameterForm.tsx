@@ -1,5 +1,5 @@
 import SendIcon from "@mui/icons-material/Send";
-import FormTextField from "@/components/Ui/FormTextField";
+import FormTextField from "@/components/FormElements/FormTextField";
 import { Button, Stack } from "@mui/material";
 import { Form, Formik, FormikHelpers } from "formik";
 import { addParameterContent } from "@/app/actions/insertData";

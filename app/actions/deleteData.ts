@@ -1,5 +1,6 @@
 "use server";
 import dbConnect from "@/lib/db/dbConnect";
+import BudgetItemModel from "@/lib/models/BudgetItemModel";
 import ParameterModel from "@/lib/models/ParameterModel";
 import { revalidatePath } from "next/cache";
 
@@ -49,6 +50,28 @@ export const deleteParameter = async (
     console.error(`Silme hatası: ${error}`);
     return {
       msg: `Parametre silinemedi: ${
+        error instanceof Error ? error.message : error
+      }`,
+      status: false,
+    };
+  }
+};
+
+export const deleteBudgetItem = async (
+  budegetItemId: string
+): Promise<DeleteResponse> => {
+  try {
+    await dbConnect();
+    const result = await BudgetItemModel.findByIdAndDelete(budegetItemId);
+    if (!result) {
+      return { msg: `Bütçe Kalemi bulunamadı`, status: false };
+    }
+    revalidatePath("/budget");
+    return { msg: `Bütçe Kalemi başarıyla silindi`, status: true };
+  } catch (error) {
+    console.error(`Silme hatası: ${error}`);
+    return {
+      msg: `Bütçe Kalemi silinemedi: ${
         error instanceof Error ? error.message : error
       }`,
       status: false,

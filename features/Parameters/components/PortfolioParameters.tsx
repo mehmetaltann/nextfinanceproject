@@ -3,7 +3,7 @@ import SendIcon from "@mui/icons-material/Send";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Grid from "@mui/material/Grid2";
 import OnayBox from "@/components/Ui/OnayBox";
-import FormTextField from "@/components/Ui/FormTextField";
+import FormTextField from "@/components/FormElements/FormTextField";
 import { Form, Formik, FormikHelpers } from "formik";
 import { OnayBoxInf, Parameter } from "@/lib/types/types";
 import { deleteParameterContent } from "@/app/actions/deleteData";

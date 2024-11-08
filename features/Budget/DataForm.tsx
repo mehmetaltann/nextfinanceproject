@@ -4,29 +4,55 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FormSelect from "./UI/FormSelect";
-
+import FormTextField from "@/components/FormElements/FormTextField";
+import FormDatePicker from "@/components/FormElements/FormDatePicker";
 import { useMemo, Fragment } from "react";
-import { uniqListFunc } from "../../../utils/help-functions";
 import { Form, Formik, FieldArray, Field } from "formik";
-import { materialDateInput } from "../../../utils/help-functions";
-import { useAddBudgetItemMutation } from "../../../redux/apis/budgetApi";
 import { MenuItem, Button, IconButton, Box, Stack } from "@mui/material";
+import { todayDateInput, uniqListFunc } from "@/utils/helpers";
+import { BudgetItemWithoutId, Parameter } from "@/lib/types/types";
+import { addBudgetItems } from "@/app/actions/insertData";
+import { handleResponseMsg } from "@/utils/toast-helper";
+import { toast } from "react-toastify";
 
-const DataForm = ({ openType, categories, closeModel }) => {
+interface DataFormProps {
+  categories: Parameter | undefined;
+  openType: string;
+  closeModel: () => void;
+}
 
-  const initialButceData = {
-    title: "",
-    date: materialDateInput,
-    amount: 0,
-    description: "",
-    categoryB: "",
-  };
+interface BudgetInfo {
+  title: string;
+  date: string;
+  amount: number;
+  description: string;
+  categoryB: string;
+}
+
+interface FormValues {
+  categoryA: string;
+  infos: BudgetInfo[];
+}
+
+const initialButceData: BudgetInfo = {
+  title: "",
+  date: todayDateInput,
+  amount: 0,
+  description: "",
+  categoryB: "",
+};
+
+const DataForm: React.FC<DataFormProps> = ({
+  openType,
+  categories,
+  closeModel,
+}) => {
   const initialButceDataMemo = useMemo(() => initialButceData, []);
 
-  const submitHandler = async (values) => {
-    let category_a = values.categoryA;
-    const yeniKayitListesi = values.infos.map((info) => {
-      return {
+  const submitHandler = async (values: FormValues) => {
+    const category_a = values.categoryA;
+    const yeniKayitListesi: BudgetItemWithoutId[] = values.infos.map(
+      (info) => ({
         title: info.title,
         amount: info.amount,
         type: openType,
@@ -34,24 +60,15 @@ const DataForm = ({ openType, categories, closeModel }) => {
         categoryA: category_a,
         categoryB: info.categoryB,
         description: info.description,
-      };
-    });
+      })
+    );
+
     try {
-      const res = await addBudgetItem(yeniKayitListesi).unwrap();
+      const res = await addBudgetItems(yeniKayitListesi);
+      handleResponseMsg(res);
       closeModel();
-      dispatch(
-        setSnackbar({
-          children: res.message,
-          severity: "success",
-        })
-      );
     } catch (error) {
-      dispatch(
-        setSnackbar({
-          children: error,
-          severity: "error",
-        })
-      );
+      toast.error("Bütçe Kalemi Eklenemedi, Bir hata oluştu: " + error);
     }
   };
 
@@ -67,8 +84,9 @@ const DataForm = ({ openType, categories, closeModel }) => {
       })
     ),
   });
+
   return (
-    <Formik
+    <Formik<FormValues>
       initialValues={{
         categoryA: "",
         infos: [initialButceDataMemo],
@@ -87,11 +105,13 @@ const DataForm = ({ openType, categories, closeModel }) => {
                 minW={200}
               >
                 {uniqListFunc(
-                  categories.filter((cat) => cat.type === openType),
-                  "categoryA"
-                ).map((catA, index) => (
-                  <MenuItem value={catA.categoryA} key={index}>
-                    {catA.categoryA}
+                  categories?.content.filter(
+                    ({ title }) => title === openType
+                  ) || [],
+                  "value1"
+                ).map(({ _id, value1 }) => (
+                  <MenuItem value={value1} key={_id}>
+                    {value1}
                   </MenuItem>
                 ))}
               </Field>
@@ -111,9 +131,9 @@ const DataForm = ({ openType, categories, closeModel }) => {
               <FieldArray name="infos">
                 {({ push, remove }) => (
                   <Fragment>
-                    {values.infos.map((i, index) => (
+                    {values.infos.map((_, index) => (
                       <Grid
-                        container="true"
+                        container
                         spacing={{ xs: 2, md: 1 }}
                         sx={{ mb: 1 }}
                         key={index}
@@ -134,14 +154,14 @@ const DataForm = ({ openType, categories, closeModel }) => {
                               name2={`infos.${index}.title`}
                               minW={150}
                             >
-                              {categories
-                                .filter((cat) => cat.type === openType)
+                              {categories?.content
+                                .filter(({ title }) => title === openType)
                                 .filter(
-                                  (cat) => cat.categoryA === values.categoryA
+                                  ({ value1 }) => value1 === values.categoryA
                                 )
-                                .map((catA, index) => (
-                                  <MenuItem value={catA.categoryB} key={index}>
-                                    {catA.categoryB}
+                                .map(({ _id, value2 }) => (
+                                  <MenuItem value={value2} key={_id}>
+                                    {value2}
                                   </MenuItem>
                                 ))}
                             </Field>
@@ -153,7 +173,7 @@ const DataForm = ({ openType, categories, closeModel }) => {
                               disabled
                               minW={150}
                             >
-                              <MenuItem value="Seçiniz">"Seçiniz"</MenuItem>
+                              <MenuItem value="">Seçiniz</MenuItem>
                             </Field>
                           )}
                         </Grid>
@@ -197,7 +217,6 @@ const DataForm = ({ openType, categories, closeModel }) => {
                     ))}
                     <IconButton
                       onClick={() => push(initialButceDataMemo)}
-                      variant="contained"
                       size="small"
                       type="button"
                     >

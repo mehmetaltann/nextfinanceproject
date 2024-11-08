@@ -1,10 +1,18 @@
+import DataFormContainers from "@/features/Budget/DataFormContainers";
+import DataTableContainer from "@/features/Budget/DataTableContainer";
 import Header from "@/components/Layouts/Header";
-import BudgetHeader from "@/features/Budget/BudgetHeader";
-import BudgetTable from "@/features/Budget/BudgetTable";
 import { PageWrapper } from "@/components/Layouts/Wrappers";
 import { Stack, Typography, Paper } from "@mui/material";
+import { fetchParameters } from "../actions/fetchData";
+import { Parameter } from "@/lib/types/types";
 
 export default async function page() {
+  const allParameters: Parameter[] = await fetchParameters();
+
+  const categoriesData: Parameter | undefined = allParameters.find(
+    (item) => item.variant === "Bütçe Kategori"
+  );
+
   return (
     <>
       <Header />
@@ -21,10 +29,10 @@ export default async function page() {
               <Typography variant="h6" color="info.main">
                 Bütçe İşlemleri
               </Typography>
-              <BudgetHeader />
+              <DataFormContainers categoriesData={categoriesData} />
             </Stack>
           </Paper>
-          <BudgetTable />
+          <DataTableContainer />
         </Stack>
       </PageWrapper>
     </>

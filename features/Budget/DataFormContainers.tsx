@@ -1,26 +1,37 @@
-"use client"
+"use client";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 import DataForm from "./DataForm";
 import { useState } from "react";
 import { Typography, Modal, Button, Box, Stack, Divider } from "@mui/material";
+import { Parameter } from "@/lib/types/types";
 
 const style = {
   position: "absolute",
   top: "40%",
   left: "50%",
-  height: "70%",
-  width: { xs: "90%", lg: "70%" },
-  overflow: "auto",
   transform: "translate(-50%, -50%)",
   bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
   p: 2,
+  width: { xs: "100%", sm: "90%" },
+  maxHeight: "90vh",
+  maxWidth: "900px",
+  overflowY: "auto",
 };
 
-const BudgetHeader = () => {
-  const [open, setOpen] = useState({ state: false, type: "Gelir" });
+interface BudgetHeaderProps {
+  categoriesData: Parameter | undefined;
+}
+
+interface OpenState {
+  state: boolean;
+  type: "Gelir" | "Gider";
+}
+
+const DataFormContainers: React.FC<BudgetHeaderProps> = ({ categoriesData }) => {
+  const [open, setOpen] = useState<OpenState>({ state: false, type: "Gelir" });
+
   const handleGelirOpen = () => setOpen({ state: true, type: "Gelir" });
   const handleGiderOpen = () => setOpen({ state: true, type: "Gider" });
   const handleClose = () => setOpen({ state: false, type: "Gelir" });
@@ -63,7 +74,7 @@ const BudgetHeader = () => {
             <Divider />
             <DataForm
               openType={open.type}
-              categories={categories}
+              categories={categoriesData}
               closeModel={handleClose}
             />
           </Stack>
@@ -73,4 +84,4 @@ const BudgetHeader = () => {
   );
 };
 
-export default BudgetHeader;
+export default DataFormContainers;

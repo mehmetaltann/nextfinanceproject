@@ -4,7 +4,12 @@ import bcrypt from "bcryptjs";
 import UserModel from "@/lib/models/UserModel";
 import ParameterModel from "@/lib/models/ParameterModel";
 import { revalidatePath } from "next/cache";
-import { Parameter, ParameterWithoutId } from "@/lib/types/types";
+import {
+  BudgetItemWithoutId,
+  Parameter,
+  ParameterWithoutId,
+} from "@/lib/types/types";
+import BudgetItemModel from "@/lib/models/BudgetItemModel";
 
 interface InsertResponse {
   msg: string;
@@ -80,6 +85,24 @@ export const addParameter = async (
   } catch (error) {
     return {
       msg: `Parametre eklenemedi: ${
+        error instanceof Error ? error.message : "Bilinmeyen hata"
+      }`,
+      status: false,
+    };
+  }
+};
+
+export const addBudgetItems = async (
+  formData: BudgetItemWithoutId[]
+): Promise<InsertResponse> => {
+  try {
+    await dbConnect();
+    await BudgetItemModel.insertMany(formData);
+    revalidatePath("/budget");
+    return { msg: "Bütçe Kalemleri Başarıyla Eklendi", status: true };
+  } catch (error) {
+    return {
+      msg: `Bütçe Kalemleri eklenemedi: ${
         error instanceof Error ? error.message : "Bilinmeyen hata"
       }`,
       status: false,
