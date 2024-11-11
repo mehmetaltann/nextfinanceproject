@@ -16,7 +16,7 @@ const BudgetItemSchema = new Schema<BudgetItem>(
       required: true,
     },
     date: {
-      type: String,
+      type: Date,
       required: true,
       trim: true,
     },

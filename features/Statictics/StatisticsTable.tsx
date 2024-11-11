@@ -1,6 +1,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useState, Fragment } from "react";
+import { BudgetItem } from "@/lib/types/types";
 import {
   Paper,
   TableContainer,
@@ -15,7 +16,7 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-import { BudgetItem } from "@/lib/types/types";
+
 
 interface row {
   label: string;

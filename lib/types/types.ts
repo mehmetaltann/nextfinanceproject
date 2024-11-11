@@ -3,7 +3,7 @@ export type BudgetItem = {
   title: string;
   amount: number;
   type: string;
-  date: string;
+  date: Date;
   categoryA: string;
   categoryB: string;
   description: string;
