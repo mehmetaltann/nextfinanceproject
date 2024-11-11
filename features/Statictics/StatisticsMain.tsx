@@ -72,7 +72,9 @@ const StatisticsMain = ({
   useEffect(() => {
     setFilteredData(
       budgetObjectList.filter((item) => {
-        const [year, month] = item.date.toISOString().split("-").map(Number);
+        let dateObject = new Date(item.date);
+        const year = dateObject.getFullYear();
+        const month = dateObject.getMonth() + 1;
         return year === thisYear && month === thisMonth;
       })
     );
@@ -94,10 +96,11 @@ const StatisticsMain = ({
 
   function handleQuery() {
     const filtData = budgetObjectList.filter((item) => {
-      const [year, month] = item.date.toISOString().split("-").map(Number);
+      let dateObject = new Date(item.date);
+      const year = dateObject.getFullYear();
+      const month = dateObject.getMonth() + 1;
       const isYearMatch = years.includes(year);
       const isMonthMatch = months.length === 0 || months.includes(month);
-
       return isYearMatch && isMonthMatch;
     });
 
