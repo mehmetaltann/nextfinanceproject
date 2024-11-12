@@ -22,6 +22,7 @@ export const updateBudgetItem = async (
       return { msg: `Bütçe Kalemi bulunamadı`, status: false };
     }
     revalidatePath("/");
+    revalidatePath("/statistics");
     return { msg: `Bütçe Kalemi başarıyla güncellendi`, status: true };
   } catch (error) {
     console.error(`Silme hatası: ${error}`);

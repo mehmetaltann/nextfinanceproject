@@ -95,6 +95,7 @@ export const addBudgetItems = async (
     await dbConnect();
     await BudgetItemModel.insertMany(formData);
     revalidatePath("/");
+    revalidatePath("/statistics");
     return { msg: "Bütçe Kalemleri Başarıyla Eklendi", status: true };
   } catch (error) {
     return {
