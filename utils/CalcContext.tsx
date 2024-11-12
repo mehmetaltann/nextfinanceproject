@@ -5,14 +5,20 @@ interface TotalDataItem {
   [key: string]: number | string;
 }
 
+interface BankData {
+  bank: string;
+  costing: number;
+  [key: string]: number | string;
+}
+
 interface CalcContextType {
   selectedBank: string;
   setSelectedBank: (value: string) => void;
   data: TotalDataItem[];
-  bankData: TotalDataItem[];
+  bankData: BankData[];
   totalData: TotalDataItem[];
-  setBankData: (newData: any[]) => void;
-  setData: (newData: any[]) => void;
+  setBankData: (newData: BankData[]) => void;
+  setData: (newData: TotalDataItem[]) => void;
   setTotalData: (newData: TotalDataItem[]) => void;
 }
 
@@ -35,7 +41,7 @@ export const CalcContextProvider: React.FC<CalcContextProviderProps> = ({
     {},
     {},
   ]);
-  const [bankData, setBankData] = useState<TotalDataItem[]>([]);
+  const [bankData, setBankData] = useState<BankData[]>([]);
   const [totalData, setTotalData] = useState<TotalDataItem[]>([]);
   const [selectedBank, setSelectedBank] = useState<string>("VB");
 

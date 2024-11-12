@@ -16,8 +16,8 @@ interface ContentItem {
   value2: string;
 }
 
-interface DataListItem {
-  [key: string]: number | string;
+interface TotalDataItem {
+  [key: string]: number;
 }
 
 interface Parameter {
@@ -29,16 +29,16 @@ interface Parameter {
 interface BankData {
   bank: string;
   costing: number;
-  [key: string]: number | string;
+  [key: string]: any;
 }
 
-function sumByList(attrList: ContentItem[], dataList: DataListItem[]) {
+function sumByList(attrList: ContentItem[], dataList: any): TotalDataItem[] {
   let totalList = attrList.map((item) => ({
     value1: item.value1,
     total: 0,
   }));
 
-  dataList.forEach((item) => {
+  dataList.forEach((item: any) => {
     for (let keyItem in item) {
       totalList.forEach((element, index) => {
         if (element.value1 === keyItem) {
@@ -75,17 +75,17 @@ const CalcMain = ({
   if (!parameterData)
     return <PageConnectionWait title="Server Bağlantısı Kurulamadı" />;
 
-  const expenseList = parameterData.find(
+  const expenseList: any = parameterData.find(
     (item) => item.variant === "Gider Türleri"
   );
-  const banksList = parameterData.find((item) => item.variant === "Banka");
+  const banksList: any = parameterData.find((item) => item.variant === "Banka");
 
   if (!expenseList || !banksList || !banksList.content) {
     return <PageConnectionWait title="Veriler Yüklenemedi" />;
   }
 
-  const handleTotalData = (bankDATAS: DataListItem[]) => {
-    const newTotalObject: any = Object.assign(
+  async function handleTotalData(bankDATAS: TotalDataItem[]): Promise<void> {
+    const newTotalObject = Object.assign(
       {},
       ...sumByList(expenseList.content, bankDATAS)
     );
@@ -94,9 +94,9 @@ const CalcMain = ({
       .toFixed(2);
 
     setTotalData([newTotalObject]);
-  };
+  }
 
-  const calculateHandle = () => {
+  async function calculateHandle(): Promise<void> {
     const newBankObject: any = Object.assign(
       {},
       ...sumByList(expenseList.content, data)
@@ -105,45 +105,41 @@ const CalcMain = ({
       .reduce((a, b) => a + b, 0)
       .toFixed(2);
 
-    const bankName = banksList.content.find(
-      (item) => item.value1 === selectedBank
-    )?.title;
-
-    if (!bankName) return; // Ensure bankName is found before proceeding
+    const bankName: string = banksList.content.filter(
+      (item: any) => item.value1 === selectedBank
+    )[0]?.title;
 
     newBankObject["bank"] = bankName;
 
-    const bankObject = bankData.find(
-      (item) => item.bank === newBankObject.bank
-    );
+    const bankObject = bankData
+      .filter((item) => item.bank === newBankObject.bank)
+      .shift();
 
     if (!bankObject) {
-      const newBankData: BankData[] = [newBankObject, ...bankData];
+      const newBankData = [newBankObject, ...bankData];
       setBankData(newBankData);
       handleTotalData(newBankData);
       setData([{}, {}, {}, {}, {}, {}, {}, {}]);
     } else {
-      const mergedObject: any = Object.entries(newBankObject).reduce(
-        (acc: { [key: string]: number }, [key, val]) => {
-          acc[key] = (acc[key] || 0) + (typeof val === "number" ? val : 0);
-          return acc;
-        },
-        {}
+      const mergedObject = [
+        ...Object.entries(newBankObject),
+        ...Object.entries(bankObject),
+      ].reduce(
+        (acc, [key, val]) => ({ ...acc, [key]: (acc[key] || 0) + val }),
+        {} as BankData
       );
-
       mergedObject["bank"] = bankName;
 
-      const newBankData: any = bankData.filter(
+      const newBankData: BankData[] = bankData.filter(
         (item) => item.bank !== bankName
       );
-      newBankData.push(mergedObject);
 
+      newBankData.push(mergedObject);
       setBankData(newBankData);
       handleTotalData(newBankData);
       setData([{}, {}, {}, {}, {}, {}, {}, {}]);
     }
-  };
-
+  }
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
