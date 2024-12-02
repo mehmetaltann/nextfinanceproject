@@ -9,13 +9,13 @@ interface FormikFormSelectProps {
   field: FieldProps<any>["field"];
 }
 
-const FormikFormSelect: React.FC<FormikFormSelectProps> = ({
+const FormikFormSelect = ({
   children,
   minW,
   label,
   form,
   field,
-}) => {
+}: FormikFormSelectProps) => {
   const { name, value } = field;
   const { setFieldValue } = form;
 

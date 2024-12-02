@@ -23,7 +23,11 @@ import {
   IconButton,
 } from "@mui/material";
 
-const NewParameter = ({ data }: { data: Parameter[] }) => {
+interface NewParameterProps {
+  data: Parameter[];
+}
+
+const NewParameter = ({ data }: NewParameterProps) => {
   const [variant, setVariant] = useState("");
   const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
     isOpen: false,

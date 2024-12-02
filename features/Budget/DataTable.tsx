@@ -62,11 +62,11 @@ interface DataTableProps {
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DataTable: React.FC<DataTableProps> = ({
+const DataTable = ({
   budgetItems,
   selectedBudgetType,
   setUpdate,
-}) => {
+}: DataTableProps) => {
   const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
     isOpen: false,
     content: "",

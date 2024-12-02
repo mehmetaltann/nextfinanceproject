@@ -15,6 +15,7 @@
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
     "@mui/material-nextjs": "^6.1.5",
+    "@mui/x-charts": "^7.23.0",
     "@mui/x-data-grid": "^7.21.0",
     "bcryptjs": "^2.4.3",
     "deps": "^1.0.0",

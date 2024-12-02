@@ -13,7 +13,7 @@ import {
   Container,
 } from "@mui/material";
 
-const LoginForm: React.FC = () => {
+const LoginForm = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 

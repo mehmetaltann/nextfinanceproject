@@ -31,13 +31,15 @@ interface NewRecord {
   value2: string;
 }
 
+interface PortfolioParametersProps {
+  data: Parameter;
+  setParameterType: (data: any) => void;
+}
+
 const PortfolioParameters = ({
   data,
   setParameterType,
-}: {
-  data: Parameter;
-  setParameterType: (data: any) => void;
-}) => {
+}: PortfolioParametersProps) => {
   const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
     isOpen: false,
     content: "",

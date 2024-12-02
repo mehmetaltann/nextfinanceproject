@@ -1,13 +1,17 @@
 "use client";
 import DataFormContainers from "@/features/Budget/DataFormContainers";
 import DataTableContainer from "@/features/Budget/DataTableContainer";
+import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 import { Stack, Typography, Paper } from "@mui/material";
 import { BudgetItem, Parameter } from "@/lib/types/types";
 import { useEffect, useState } from "react";
 import { fetchBudgetItems } from "@/app/actions/fetchData";
-import PageConnectionWait from "@/components/Ui/PageConnectionWait";
 
-const BudgetMain = ({ allParameters }: { allParameters: Parameter[] }) => {
+interface BudgetMainProps {
+  allParameters: Parameter[];
+}
+
+const BudgetMain = ({ allParameters }: BudgetMainProps) => {
   const categoriesData: Parameter | undefined = allParameters.find(
     (item) => item.variant === "Bütçe Kategori"
   );
@@ -54,7 +58,10 @@ const BudgetMain = ({ allParameters }: { allParameters: Parameter[] }) => {
           <Typography variant="h6" color="info.main">
             Bütçe İşlemleri
           </Typography>
-          <DataFormContainers categoriesData={categoriesData} setUpdate={setUpdate}/>
+          <DataFormContainers
+            categoriesData={categoriesData}
+            setUpdate={setUpdate}
+          />
         </Stack>
       </Paper>
       <DataTableContainer

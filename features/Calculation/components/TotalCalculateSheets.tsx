@@ -23,9 +23,7 @@ interface TotalDataItem {
   [key: string]: number | string;
 }
 
-const TotalCalculateSheets: React.FC<TotalCalculateSheetsProps> = ({
-  expenseList,
-}) => {
+const TotalCalculateSheets = ({ expenseList }: TotalCalculateSheetsProps) => {
   const context = useContext(CalcContext);
 
   if (!context) {

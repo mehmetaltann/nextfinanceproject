@@ -13,7 +13,11 @@ interface NewRecord {
   value2: string;
 }
 
-const ParameterForm = ({ data }: { data: Parameter }) => {
+interface ParameterFormProps {
+  data: Parameter;
+}
+
+const ParameterForm = ({ data }: ParameterFormProps) => {
   const submitHandler = async (
     values: any,
     { resetForm }: FormikHelpers<any>

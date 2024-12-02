@@ -2,10 +2,12 @@
 import Grid from "@mui/material/Grid2";
 import StatisticsTable from "./StatisticsTable";
 import PageConnectionWait from "@/components/Ui/PageConnectionWait";
+import StaticsChart from "./StaticsChart";
 import { useTheme } from "@mui/material/styles";
 import { useState, useEffect, useMemo } from "react";
 import { generateArrayOfYears, thisMonth, thisYear } from "@/utils/helpers";
 import { BudgetItem } from "@/lib/types/types";
+import { handleYearMonthLists } from "./helperFunctions";
 import {
   Paper,
   MenuItem,
@@ -17,7 +19,26 @@ import {
   Button,
   Stack,
   SelectChangeEvent,
+  Typography,
+  Divider,
+  Modal,
 } from "@mui/material";
+
+
+const style = {
+  position: "absolute",
+  top: "40%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 2,
+  width: { xs: "100%", sm: "90%" },
+  maxHeight: "90vh",
+  maxWidth: "980px",
+  overflowY: "auto",
+};
 
 type Month = { value: number; label: string };
 
@@ -47,6 +68,10 @@ const MenuProps = {
   },
 };
 
+interface StatisticsMainProps {
+  allBudgetItems: BudgetItem[];
+}
+
 function getStyles(name: number, personName: number[], theme: any) {
   return {
     fontWeight:
@@ -58,12 +83,12 @@ function getStyles(name: number, personName: number[], theme: any) {
 
 const StatisticsMain = ({
   allBudgetItems: budgetItems,
-}: {
-  allBudgetItems: BudgetItem[];
-}) => {
+}: StatisticsMainProps) => {
   const [years, setYears] = useState<number[]>([thisYear]);
   const [months, setMonths] = useState<number[]>([thisMonth]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [dateString, setDateString] = useState<any[]>([]);
 
   if (!budgetItems) return <PageConnectionWait title="Veriler Bekleniyor" />;
 
@@ -95,6 +120,8 @@ const StatisticsMain = ({
   };
 
   function handleQuery() {
+    const { sortedItems } = handleYearMonthLists(months, years);
+    setDateString(sortedItems);
     const filtData = budgetObjectList.filter((item) => {
       let dateObject = new Date(item.date);
       const year = dateObject.getFullYear();
@@ -103,7 +130,6 @@ const StatisticsMain = ({
       const isMonthMatch = months.length === 0 || months.includes(month);
       return isYearMatch && isMonthMatch;
     });
-
     setFilteredData(filtData);
   }
 
@@ -223,6 +249,33 @@ const StatisticsMain = ({
             >
               Sorgula
             </Button>
+          </Grid>
+          <Grid>
+            <Button
+              variant="contained"
+              sx={{ p: 1.8, minWidth: "15ch" }}
+              size="large"
+              onClick={() => setModalOpen(true)}
+            >
+              Grafik
+            </Button>
+            <Modal
+              open={modalOpen}
+              onClose={() => setModalOpen(false)}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Stack spacing={2}>
+                  <Typography variant="h5">Grafik</Typography>
+                  <Divider />
+                  <StaticsChart
+                    data={filteredData}
+                    dateString={dateString}
+                  />
+                </Stack>
+              </Box>
+            </Modal>
           </Grid>
         </Grid>
       </Paper>

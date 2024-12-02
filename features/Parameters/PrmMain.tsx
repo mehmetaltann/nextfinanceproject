@@ -8,15 +8,16 @@ import NewParameter from "./components/NewParameter";
 import { useEffect, useState } from "react";
 import { fetchParameters } from "@/app/actions/fetchData";
 import { Parameter } from "@/lib/types/types";
+import { PageWrapper } from "@/components/Layouts/Wrappers";
 import {
   Stack,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { PageWrapper } from "@/components/Layouts/Wrappers";
 
-const PrmMain: React.FC = () => {
+
+const PrmMain = () => {
   const [parameters, setParameters] = useState<Parameter[] | null>(null);
   const [filteredData, setFilteredData] = useState<Parameter | undefined>(
     undefined

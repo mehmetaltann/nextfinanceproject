@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { TextField, MenuItem } from "@mui/material";
 
 interface AltanSelectProps {
@@ -18,7 +18,7 @@ interface AltanSelectProps {
   isAll?: boolean;
 }
 
-const AltanSelect: React.FC<AltanSelectProps> = ({
+const AltanSelect = ({
   id,
   variant = "standard",
   onChange,
@@ -33,7 +33,7 @@ const AltanSelect: React.FC<AltanSelectProps> = ({
   dataValueAttr,
   isAll = false,
   ...rest
-}) => {
+}: AltanSelectProps) => {
   return (
     <TextField
       select
@@ -41,7 +41,7 @@ const AltanSelect: React.FC<AltanSelectProps> = ({
       defaultValue={defaultValue}
       variant={variant}
       value={value}
-      size={size} 
+      size={size}
       color={color}
       onChange={(e) => onChange(e.target.value)}
       sx={{
@@ -57,7 +57,7 @@ const AltanSelect: React.FC<AltanSelectProps> = ({
         </MenuItem>
       )}
       {data.length > 0 ? (
-        data.map((option:any) => (
+        data.map((option: any) => (
           <MenuItem
             key={option[dataValueAttr]}
             value={option[dataValueAttr]}

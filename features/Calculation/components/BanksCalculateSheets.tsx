@@ -20,7 +20,7 @@ interface BanksCalculateSheetsProps {
   };
 }
 
-const BanksCalculateSheets: React.FC<BanksCalculateSheetsProps> = ({ expenseList }) => {
+const BanksCalculateSheets = ({ expenseList }: BanksCalculateSheetsProps) => {
   const context = useContext(CalcContext);
 
   if (!context) {

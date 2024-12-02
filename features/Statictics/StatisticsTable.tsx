@@ -2,6 +2,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useState, Fragment } from "react";
 import { BudgetItem } from "@/lib/types/types";
+import { transformData } from "./helperFunctions";
 import {
   Paper,
   TableContainer,
@@ -17,7 +18,6 @@ import {
   Stack,
 } from "@mui/material";
 
-
 interface row {
   label: string;
   value: number;
@@ -30,54 +30,17 @@ interface transformData {
   alt: row[];
 }
 
-const StatisticsTable = ({
-  data,
-  monthNumber,
-}: {
+interface StatisticsTableProps {
   data: BudgetItem[];
   monthNumber: number;
-}) => {
+}
+
+const StatisticsTable = ({ data, monthNumber }: StatisticsTableProps) => {
   const incomeData = data.filter((item) => item.type === "Gelir");
   const outcomeData = data.filter((item) => item.type === "Gider");
   const totalIncome = incomeData.reduce((n, { amount }) => n + amount, 0);
   const totalOutcome = outcomeData.reduce((n, { amount }) => n + amount, 0);
   const totalBalance = Number(totalIncome) - Number(totalOutcome);
-
-  function transformData(data: BudgetItem[]) {
-    const catBlist = Object.values(
-      data.reduce((agg: { [key: string]: row }, item) => {
-        if (!agg[item.categoryB]) {
-          agg[item.categoryB] = {
-            label: item.categoryB,
-            value: 0,
-            up: item.categoryA,
-          };
-        }
-        agg[item.categoryB].value += Number(item.amount);
-        return agg;
-      }, {})
-    );
-
-    const catAlist = Object.values(
-      data.reduce((agg: { [key: string]: transformData }, item) => {
-        if (!agg[item.categoryA]) {
-          agg[item.categoryA] = { label: item.categoryA, value: 0, alt: [] };
-        }
-        agg[item.categoryA].value += Number(item.amount);
-        return agg;
-      }, {})
-    );
-
-    catAlist.forEach((itemA) => {
-      catBlist.forEach((itemB) => {
-        if (itemA.label === itemB.up) {
-          itemA.alt.push(itemB);
-        }
-      });
-    });
-
-    return catAlist;
-  }
 
   function Row({ row }: { row: transformData }) {
     const [open, setOpen] = useState(false);
@@ -162,7 +125,7 @@ const StatisticsTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {transformData(incomeData).map((row) => (
+            {transformData(incomeData).catAlist.map((row) => (
               <Row key={row.value} row={row} />
             ))}
           </TableBody>
@@ -191,7 +154,7 @@ const StatisticsTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {transformData(outcomeData).map((row) => (
+            {transformData(outcomeData).catAlist.map((row) => (
               <Row key={row.value} row={row} />
             ))}
           </TableBody>

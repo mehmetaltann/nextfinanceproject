@@ -16,18 +16,12 @@ import {
   IconButton,
 } from "@mui/material";
 
-
 interface ParameterTableProps {
   tableWidth: string;
   data: Parameter;
-  formName: string;
 }
 
-const ParameterTable: React.FC<ParameterTableProps> = ({
-  tableWidth,
-  data,
-  formName,
-}) => {
+const ParameterTable = ({ tableWidth, data }: ParameterTableProps) => {
   const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
     isOpen: false,
     content: "",

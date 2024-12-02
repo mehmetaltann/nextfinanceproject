@@ -32,6 +32,10 @@ interface BankData {
   [key: string]: any;
 }
 
+interface CalcMainProps {
+  allParameters: Parameter[];
+}
+
 function sumByList(attrList: ContentItem[], dataList: any): TotalDataItem[] {
   let totalList = attrList.map((item) => ({
     value1: item.value1,
@@ -51,11 +55,7 @@ function sumByList(attrList: ContentItem[], dataList: any): TotalDataItem[] {
   return totalList.map((item) => ({ [item.value1]: item.total }));
 }
 
-const CalcMain = ({
-  allParameters: parameterData,
-}: {
-  allParameters: Parameter[];
-}) => {
+const CalcMain = ({ allParameters: parameterData }: CalcMainProps) => {
   const context = useContext(CalcContext);
 
   if (!context) {

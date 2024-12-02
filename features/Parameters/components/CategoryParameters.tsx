@@ -33,13 +33,15 @@ interface NewRecord {
   value2: string;
 }
 
+interface CategoryParametersProps {
+  data: Parameter;
+  setParameterType: (data: any) => void;
+}
+
 const CategoryParameters = ({
   data,
   setParameterType,
-}: {
-  data: Parameter;
-  setParameterType: (data: any) => void;
-}) => {
+}: CategoryParametersProps) => {
   const [onayBoxInf, setOnayBoxInf] = useState<OnayBoxInf>({
     isOpen: false,
     content: "",

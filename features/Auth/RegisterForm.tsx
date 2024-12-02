@@ -14,7 +14,7 @@ import {
   Container,
 } from "@mui/material";
 
-const RegisterForm: React.FC = () => {
+const RegisterForm = () => {
   const [formState, formAction] = useActionState(addUser, null);
 
   useEffect(() => {

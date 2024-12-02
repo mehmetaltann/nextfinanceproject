@@ -7,12 +7,12 @@ interface PageWrapperProps {
   [key: string]: any;
 }
 
-export const PageWrapper: React.FC<PageWrapperProps> = ({
+export const PageWrapper = ({
   maxW = "lg",
   children,
   conSx,
   ...rest
-}) => {
+}: PageWrapperProps) => {
   return (
     <Box sx={{ height: "90vh", overflow: "auto" }}>
       <Container

@@ -30,7 +30,7 @@ const pages: Page[] = [
   { title: "İSTATİSTİKLER", link: "statistics" },
 ];
 
-const NavBar: React.FC = () => {
+const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const router = useRouter();

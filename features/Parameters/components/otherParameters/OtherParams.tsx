@@ -4,7 +4,11 @@ import Grid from "@mui/material/Grid2";
 import { Paper, Typography } from "@mui/material";
 import { Parameter } from "@/lib/types/types";
 
-const OtherParams = ({ data }: { data: Parameter }) => {
+interface OtherParamsProps {
+  data: Parameter;
+}
+
+const OtherParams = ({ data }: OtherParamsProps) => {
   return (
     <Grid container spacing={2} sx={{ mt: 2 }}>
       <Grid>
@@ -20,11 +24,7 @@ const OtherParams = ({ data }: { data: Parameter }) => {
           {`${data.variant} Listesi`}
         </Typography>
         <Paper>
-          <ParameterTable
-            tableWidth={"400"}
-            data={data}
-            formName={data.variant}
-          />
+          <ParameterTable tableWidth={"400"} data={data} />
         </Paper>
       </Grid>
     </Grid>

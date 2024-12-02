@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "features/Calculation/CalcMain.js", "features/Calculation/components/BanksCalculateSheets.tsx", "features/Calculation/components/BaseCalculateSheet.tsx", "features/Calculation/components/TotalCalculateSheets.tsx", "app/calculation/page.tsx", "features/Calculation/CalcMain.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "features/Calculation/CalcMain.js", "features/Calculation/components/BanksCalculateSheets.tsx", "features/Calculation/components/BaseCalculateSheet.tsx", "features/Calculation/components/TotalCalculateSheets.tsx", "app/calculation/page.tsx", "features/Calculation/CalcMain.tsx", "components/FormElements/FormDatePicker.tsx"],
   "exclude": ["node_modules"]
 }

@@ -23,14 +23,14 @@ interface DataTableContainerProps {
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DataTableContainer: React.FC<DataTableContainerProps> = ({
+const DataTableContainer = ({
   selectedBudgetType,
   selectedDate,
   setSelectedBudgetType,
   setSelectedDate,
   budgetItems,
   setUpdate,
-}) => {
+}: DataTableContainerProps) => {
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
       <Grid container spacing={2}>

@@ -5,7 +5,7 @@ type FormTextFieldProps = TextFieldProps & {
   name: string;
 };
 
-const FormTextField: React.FC<FormTextFieldProps> = ({ name, ...otherProps }) => {
+const FormTextField = ({ name, ...otherProps }: FormTextFieldProps) => {
   const [field, meta] = useField(name);
 
   const configTextField = {

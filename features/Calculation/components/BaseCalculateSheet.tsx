@@ -23,9 +23,7 @@ interface BaseCalculateSheetProps {
   };
 }
 
-const BaseCalculateSheet: React.FC<BaseCalculateSheetProps> = ({
-  expenseList,
-}) => {
+const BaseCalculateSheet = ({ expenseList }: BaseCalculateSheetProps) => {
   const context = useContext(CalcContext);
 
   if (!context) {

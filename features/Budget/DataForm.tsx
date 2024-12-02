@@ -43,12 +43,12 @@ const initialButceData: BudgetInfo = {
   categoryB: "",
 };
 
-const DataForm: React.FC<DataFormProps> = ({
+const DataForm = ({
   openType,
   categories,
   closeModel,
   setUpdate,
-}) => {
+}: DataFormProps) => {
   const initialButceDataMemo = useMemo(() => initialButceData, []);
 
   const submitHandler = async (values: FormValues) => {

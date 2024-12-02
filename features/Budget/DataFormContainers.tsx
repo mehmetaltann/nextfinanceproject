@@ -29,10 +29,10 @@ interface OpenState {
   type: "Gelir" | "Gider";
 }
 
-const DataFormContainers: React.FC<DataFormContainersProps> = ({
+const DataFormContainers = ({
   categoriesData,
-  setUpdate
-}) => {
+  setUpdate,
+}: DataFormContainersProps) => {
   const [open, setOpen] = useState<OpenState>({ state: false, type: "Gelir" });
   const handleGelirOpen = () => setOpen({ state: true, type: "Gelir" });
   const handleGiderOpen = () => setOpen({ state: true, type: "Gider" });

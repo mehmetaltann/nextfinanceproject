@@ -39,7 +39,7 @@ interface ModalButtonProps {
   size?: "small" | "medium" | "large";
 }
 
-const ModalButton: React.FC<ModalButtonProps> = ({
+const ModalButton = ({
   children,
   minW = "25vh",
   maxW = "35vh",
@@ -55,7 +55,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
   setModalOpen,
   icon,
   size = "small",
-}) => {
+}: ModalButtonProps) => {
   const modalStyle = {
     position: "absolute",
     top: "50%",
